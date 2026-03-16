@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>مساعد OFPPT — GE &amp; GEn ⚡</title>
+<title>مساعد OFPPT — GE & GEn ⚡</title>
 <link rel="manifest" id="pwa-manifest">
 <meta name="theme-color" content="#0d1117">
 <meta name="mobile-web-app-capable" content="yes">
@@ -163,7 +163,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
 
 /* ── UPLOAD AREA ── */
 .upload-bar{padding:6px 12px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;}
-.upload-row{display:flex;align-items:center;gap:8px;}
+.upload-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .upload-btn{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;transition:all 0.2s;}
 .upload-btn:hover{border-color:var(--accent2);color:var(--accent2);}
 .upload-preview{display:flex;align-items:center;gap:6px;background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.2);border-radius:8px;padding:4px 10px;font-size:11px;color:var(--accent2);}
@@ -374,7 +374,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/svg2pdf.js@2.0.3/dist/svg2pdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
 <style>
 /* Force math LTR always + prevent zoom */
 .katex, .katex-display, .katex * { direction: ltr !important; unicode-bidi: embed !important; }
@@ -447,8 +449,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
   </div>
   <div class="status" style="flex-shrink:0;"><div class="status-dot"></div><span id="statusTxt" class="status-text">متصل وجاهز</span></div>
   <button id="userAvatarBtn" onclick="toggleDropdown()" style="width:34px;height:34px;border-radius:50%;border:2px solid var(--border);background:var(--surface2);overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:all 0.2s;">👤</button>
-      <button onclick="toggleLowData()" id="lowDataBtn"  title="الوضع الاقتصادي" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;">📡</button>
-      <button id="langBtn"  onclick="toggleLang()" style="background:rgba(255,255,255,0.07);border:1px solid var(--border);border-radius:20px;padding:5px 12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s;flex-shrink:0;">🇫🇷 FR</button>
+  <button onclick="toggleLowData()" id="lowDataBtn" title="الوضع الاقتصادي" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;">📡</button>
+  <button id="langBtn" onclick="toggleLang()" style="background:rgba(255,255,255,0.07);border:1px solid var(--border);border-radius:20px;padding:5px 12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s;flex-shrink:0;">🇫🇷 FR</button>
+  <button id="focusModeBtn" onclick="toggleFocusMode()" style="background:rgba(255,255,255,0.07);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="وضع التركيز">🔍</button>
   <span class="storage-badge" id="storageBadge" onclick="clearHistory()" title="حذف المحادثات المحفوظة">💾 <span id="msgCount">0</span></span>
 </div>
 <div class="toast" id="toast"></div>
@@ -562,6 +565,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
           📎 <span id="uploadLabel">صورة / PDF</span>
         </label>
         <button onclick="switchTab('scanner')" title="الماسح الذكي" style="display:flex;align-items:center;gap:4px;padding:5px 11px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;transition:all 0.2s;">📷 ماسح</button>
+        <button onclick="openCircuitSim()" style="display:flex;align-items:center;gap:4px;padding:5px 11px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'Tajawal',sans-serif;font-size:11px;cursor:pointer;transition:all 0.2s;">🔌 محاكي دارات</button>
+        <button id="voiceSearchBtn" onclick="startVoiceSearch()" style="display:flex; align-items:center; justify-content:center; padding:5px 11px; background:transparent; border:1px solid var(--border); border-radius:8px; color:var(--muted); cursor:pointer; font-size:11px; gap:4px;" title="بحث صوتي">
+          🎤 بحث صوتي
+        </button>
         <input type="file" id="fileInput" accept="image/*,.pdf" style="display:none" onchange="handleFileSelect(this)">
         <div id="filePreview" style="display:none;align-items:center;gap:6px;"></div>
         <button id="pdf-solve-btn" onclick="solvePdfExercise()" style="display:none;padding:4px 10px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.3);border-radius:7px;color:var(--accent);font-size:11px;cursor:pointer;font-family:Tajawal,sans-serif;font-weight:700;">⚡ حل التمارين</button>
@@ -576,8 +583,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
         <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
       </div>
       <div class="input-hints" id="hintChips"></div>
-      <div style="margin-top:5px;">
+      <div style="margin-top:5px; display:flex; gap:5px; flex-wrap:wrap;">
         <button id="socratic-btn" onclick="toggleSocratic()" style="font-size:10.5px;color:var(--muted);background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:3px 9px;cursor:pointer;transition:all 0.2s;font-family:Tajawal,sans-serif;">🧠 سقراطي</button>
+        <button onclick="addInteractiveExercise()" style="font-size:10.5px;color:var(--accent);background:rgba(249,115,22,0.04);border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:3px 9px;cursor:pointer;font-family:Tajawal,sans-serif;">🔢 تمرين تفاعلي</button>
       </div>
     </div>
   </div><!-- end tab-panel chat -->
@@ -793,12 +801,12 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
           <label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;background:var(--surface2);border:2px dashed var(--border);border-radius:12px;cursor:pointer;transition:all 0.2s;" for="scanner-camera-input">
             <span style="font-size:32px;">📸</span>
-            <span style="font-size:12px;color:var(--muted);">التقاط صورة</span>
+            <span style="font-size:12px;color:var(--muted);;">التقاط صورة</span>
             <input type="file" id="scanner-camera-input" accept="image/*" capture="environment" style="display:none" onchange="loadScannerImage(this)">
           </label>
           <label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;background:var(--surface2);border:2px dashed var(--border);border-radius:12px;cursor:pointer;transition:all 0.2s;" for="scanner-file-input">
             <span style="font-size:32px;">🖼️</span>
-            <span style="font-size:12px;color:var(--muted);">رفع صورة</span>
+            <span style="font-size:12px;color:var(--muted);;">رفع صورة</span>
             <input type="file" id="scanner-file-input" accept="image/*" style="display:none" onchange="loadScannerImage(this)">
           </label>
         </div>
@@ -871,7 +879,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
     <div class="vmodal-head">
       <h4 id="mindmap-title">🗺️ الخريطة الذهنية</h4>
       <div style="display:flex;gap:6px;">
-        <button onclick="exportMindMap()" style="padding:4px 10px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.3);border-radius:6px;color:var(--accent);font-size:11px;cursor:pointer;font-family:Tajawal,sans-serif;">💾 حفظ</button>
+        <button onclick="exportMindMap()" style="padding:4px 10px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.3);border-radius:6px;color:var(--accent);font-size:11px;cursor:pointer;font-family:Tajawal,sans-serif;">💾 حفظ PDF</button>
         <button class="vmodal-close" onclick="closeMindMap()">✕</button>
       </div>
     </div>
@@ -894,7 +902,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
         <div id="fc-card" style="background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:30px 24px;text-align:center;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.3s;position:relative;">
           <div id="fc-label" style="font-size:10px;color:var(--accent);font-weight:700;margin-bottom:10px;letter-spacing:1px;">سؤال</div>
           <div id="fc-text" style="font-size:15px;line-height:1.8;color:var(--text);"></div>
-          <div style="position:absolute;bottom:10px;font-size:10px;color:var(--muted);">👆 اضغط للقلب</div>
+          <div style="position:absolute;bottom:10px;font-size:10px;color:var(--muted);;">👆 اضغط للقلب</div>
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
@@ -910,6 +918,41 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
+<!-- CIRCUIT SIMULATOR MODAL -->
+<div class="vmodal" id="circuitSimModal">
+  <div class="vmodal-box" style="max-width: 500px;">
+    <div class="vmodal-head">
+      <h4>🔌 محاكي دارة بسيطة (قانون أوم)</h4>
+      <button class="vmodal-close" onclick="closeCircuitSim()">✕</button>
+    </div>
+    <div style="padding: 20px;">
+      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
+        <label style="min-width: 30px;">V</label>
+        <input type="range" id="simVoltage" min="0" max="230" value="12" step="1" style="flex:1;" oninput="updateCircuitSim()">
+        <input type="number" id="simVoltageNum" value="12" min="0" max="230" style="width: 70px; background:var(--surface2); border:1px solid var(--border); border-radius:5px; padding:5px; color:var(--text);" onchange="syncSliderFromNum('voltage')">
+        <span>V</span>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
+        <label style="min-width: 30px;">R</label>
+        <input type="range" id="simResistance" min="1" max="1000" value="100" step="1" style="flex:1;" oninput="updateCircuitSim()">
+        <input type="number" id="simResistanceNum" value="100" min="1" max="1000" style="width: 70px; background:var(--surface2); border:1px solid var(--border); border-radius:5px; padding:5px; color:var(--text);" onchange="syncSliderFromNum('resistance')">
+        <span>Ω</span>
+      </div>
+      
+      <div style="background:rgba(34,211,238,0.05); border:1px solid rgba(34,211,238,0.2); border-radius:10px; padding:15px; margin-top:10px;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--muted);">التيار (I):</span>
+          <span id="simCurrent" style="color:var(--accent2); font-weight:700; font-size:18px;">0.12 A</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:5px;">
+          <span style="color:var(--muted);;">القدرة (P):</span>
+          <span id="simPower" style="color:var(--accent); font-weight:700; font-size:16px;">1.44 W</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- VIDEO MODAL -->
 <div class="vmodal" id="vmodal">
   <div class="vmodal-box">
@@ -919,6 +962,131 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
     </div>
     <div class="vmodal-video"><iframe id="vmodal-iframe" allowfullscreen></iframe></div>
     <div class="vmodal-desc" id="vmodal-desc"></div>
+  </div>
+</div>
+
+<!-- MOBILE SUBJECT DRAWER -->
+<div class="low-data-badge" id="lowDataBadge">📡 وضع اقتصادي</div>
+<button class="mob-subj-btn" id="mobSubjBtn" onclick="openDrawer()" title="اختر المادة">📚</button>
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="subject-drawer" id="subjectDrawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-head">
+    <h3>📚 اختر المادة</h3>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="loginScreen" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
+  <!-- Setup banner (shown when Firebase not configured) -->
+  <div id="setupBanner" style="display:none;position:absolute;top:0;left:0;right:0;background:rgba(245,158,11,0.1);border-bottom:1px solid rgba(245,158,11,0.3);padding:10px 16px;font-size:11px;color:var(--accent3);text-align:center;">
+    ⚙️ يجب إعداد Firebase أولاً — اضغط <strong style="cursor:pointer;text-decoration:underline;" onclick="document.getElementById('firebaseSetup').style.display='flex'">هنا للإعداد</strong>
+  </div>
+
+  <div style="width:100%;max-width:400px;">
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="width:70px;height:70px;background:linear-gradient(135deg,#c9271e,#006233);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 14px;box-shadow:0 0 30px rgba(249,115,22,0.3);">🇲🇦</div>
+      <h1 style="font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;" style="font-family:Rajdhani,Tajawal,sans-serif;letter-spacing:0.5px;">OFPPT AI — GE &amp; GEn</h1>
+      <p style="font-size:12px;color:var(--muted);;">سجّل دخولك للوصول لجميع الميزات</p>
+    </div>
+
+    <!-- Login Card -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+
+      <!-- Google Sign In Button -->
+      <button id="googleSignInBtn" onclick="signInWithGoogle()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:14px 20px;background:#fff;border:none;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;color:#333;font-family:'Tajawal',sans-serif;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.15);margin-bottom:16px;">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        تسجيل الدخول بـ Google
+      </button>
+
+      <!-- Divider -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span style="font-size:11px;color:var(--muted);;">أو</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+
+      <!-- Guest Mode -->
+      <button onclick="continueAsGuest()" style="width:100%;padding:12px 20px;background:transparent;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);font-family:'Tajawal',sans-serif;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent2)';this.style.color='var(--accent2)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+        👤 متابعة كزائر (بدون حفظ)
+      </button>
+
+      <!-- Benefits -->
+      <div style="margin-top:20px;padding:14px;background:rgba(249,115,22,0.04);border:1px solid rgba(249,115,22,0.1);border-radius:10px;">
+        <p style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px;">✅ مزايا تسجيل الدخول:</p>
+        <div style="font-size:11px;color:var(--muted);line-height:2;">
+          ☁️ حفظ المحادثات على السحابة<br>
+          ⭐ مزامنة المفضلة على جميع أجهزتك<br>
+          📊 تتبع تقدمك الدراسي<br>
+          🔔 تنبيهات المذاكرة الشخصية
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div id="loginLoading" style="display:none;text-align:center;padding:16px;">
+        <div style="width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 8px;"></div>
+        <p style="font-size:12px;color:var(--muted);;">جاري تسجيل الدخول...</p>
+      </div>
+
+      <!-- Error message -->
+      <div id="loginError" style="display:none;margin-top:12px;padding:10px;background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.2);border-radius:8px;font-size:12px;color:var(--danger);text-align:center;"></div>
+    </div>
+
+    <p style="text-align:center;font-size:10px;color:var(--muted);margin-top:16px;">
+      🔒 نستخدم Google OAuth الآمن — لا نحفظ كلمات المرور
+    </p>
+  </div>
+</div>
+
+<!-- ══ FIREBASE SETUP MODAL ══ -->
+<div id="firebaseSetup" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;padding:16px;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <h3 style="font-size:15px;font-weight:700;color:var(--accent);;">⚙️ إعداد Firebase</h3>
+      <button onclick="document.getElementById('firebaseSetup').style.display='none'" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;">✕</button>
+    </div>
+
+    <div style="background:rgba(34,211,238,0.05);border:1px solid rgba(34,211,238,0.2);border-radius:10px;padding:14px;margin-bottom:18px;font-size:12px;color:var(--muted);line-height:1.9;">
+      <strong style="color:var(--accent2);;">📋 خطوات الإعداد:</strong><br>
+      1. اذهب إلى <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent);">console.firebase.google.com</a><br>
+      2. أنشئ مشروعاً جديداً<br>
+      3. فعّل Authentication → Google<br>
+      4. أضف الدومين المستضاف في Authorized domains<br>
+      5. انسخ بيانات المشروع من Project Settings<br>
+      6. الصق البيانات أدناه
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
+      <input id="fb-apiKey" placeholder="apiKey" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:12px;font-family:monospace;outline:none;width:100%;">
+      <input id="fb-authDomain" placeholder="authDomain (yourapp.firebaseapp.com)" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:12px;font-family:monospace;outline:none;width:100%;">
+      <input id="fb-projectId" placeholder="projectId" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:12px;font-family:monospace;outline:none;width:100%;">
+    </div>
+
+    <div style="display:flex;gap:8px;">
+      <button onclick="saveFirebaseConfig()" style="flex:1;padding:11px;background:linear-gradient(135deg,var(--accent),#ea580c);border:none;border-radius:10px;color:#000;font-weight:700;font-size:13px;cursor:pointer;font-family:'Tajawal',sans-serif;">💾 حفظ وتفعيل</button>
+      <button onclick="document.getElementById('firebaseSetup').style.display='none'" style="padding:11px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:13px;cursor:pointer;font-family:'Tajawal',sans-serif;">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- User Profile Dropdown -->
+<div id="userDropdown" style="display:none;position:fixed;top:65px;left:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;z-index:500;min-width:220px;box-shadow:0 8px 30px rgba(0,0,0,0.4);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+    <img id="userAvatarDropdown" src="" style="width:38px;height:38px;border-radius:50%;border:2px solid var(--accent);" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🧑‍🎓</text></svg>'">
+    <div>
+      <div id="userNameDropdown" style="font-size:13px;font-weight:700;color:var(--text);"></div>
+      <div id="userEmailDropdown" style="font-size:10px;color:var(--muted);;"></div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px;">
+    <span id="userRankSpan" style="padding:8px 10px; background:rgba(249,115,22,0.08); border-radius:8px; font-size:11px; color:var(--accent); text-align:center;">🌱 مبتدئ</span>
+    <button onclick="switchTab('analytics');closeDropdown()" style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;cursor:pointer;font-family:'Tajawal',sans-serif;text-align:right;">📊 إحصائياتي</button>
+    <button onclick="switchTab('favorites');closeDropdown()" style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;cursor:pointer;font-family:'Tajawal',sans-serif;text-align:right;">⭐ مفضلتي</button>
+    <button onclick="signOutUser()" style="padding:8px 10px;background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.2);border-radius:8px;color:var(--danger);font-size:12px;cursor:pointer;font-family:'Tajawal',sans-serif;text-align:right;">🚪 تسجيل الخروج</button>
   </div>
 </div>
 
@@ -1984,16 +2152,26 @@ window.addEventListener("DOMContentLoaded", function initPWA() {
   const url = URL.createObjectURL(blob);
   document.getElementById('pwa-manifest').href = url;
 
-  // Register service worker for offline support
-  if ('serviceWorker' in navigator && (location.protocol==='http:'||location.protocol==='https:')) {
-    const swCode = `
-      const CACHE = 'msaed-v1';
-      const ASSETS = ['./', 'https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap'];
-      self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(()=>{}))));
-      self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => new Response('', {status:200})))));
-    `;
-    const swBlob = new Blob([swCode], {type:'application/javascript'});
-    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+  // تسجيل Service Worker للعمل دون اتصال
+  if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(registration => {
+          console.log('ServiceWorker registered with scope: ', registration.scope);
+        })
+        .catch(error => {
+          console.log('ServiceWorker registration failed: ', error);
+          // إذا فشل التسجيل، يمكننا استخدام الكود القديم كخطة بديلة.
+          const swCode = `
+            const CACHE = 'msaed-v1';
+            const ASSETS = ['./', 'https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap'];
+            self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(()=>{}))));
+            self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => new Response('', {status:200})))));
+          `;
+          const swBlob = new Blob([swCode], {type:'application/javascript'});
+          navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+        });
+    });
   }
 
   // PWA install prompt
@@ -2547,7 +2725,7 @@ function buildNationalExams() {
                 <span style="background:linear-gradient(135deg,var(--accent),#ea580c);color:#000;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${ex.num}</span>
                 <strong style="font-size:13.5px;">${ex.title}</strong>
               </div>
-              <span style="font-size:11px;color:var(--accent3);">⭐ ${ex.points} نقاط</span>
+              <span style="font-size:11px;color:var(--accent3);;">⭐ ${ex.points} نقاط</span>
             </div>
             <div style="font-size:13px;line-height:1.9;color:var(--text);margin-bottom:10px;" class="exam-text-${exam.id}-${ex.num}">${formatText(ex.text)}</div>
             <button onclick="toggleSolution('sol-${exam.id}-${ex.num}',this)" style="font-size:11px;padding:5px 12px;background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);border-radius:7px;color:var(--accent);cursor:pointer;font-family:Tajawal,sans-serif;transition:all 0.2s;">✅ التصحيح النموذجي</button>
@@ -2626,7 +2804,7 @@ function openPDFModal(examId, type, pdfEntry) {
            style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;background:linear-gradient(135deg,var(--accent),#ea580c);border-radius:12px;color:#000;font-weight:700;font-size:14px;text-decoration:none;">
           📥 فتح صفحة التحميل
         </a>
-        <p style="font-size:11px;color:var(--muted);">ستفتح صفحة الامتحانات — ابحث عن سنة ${exam?.year || ''} واضغط تحميل</p>
+        <p style="font-size:11px;color:var(--muted);;">ستفتح صفحة الامتحانات — ابحث عن سنة ${exam?.year || ''} واضغط تحميل</p>
         <div style="background:var(--surface2);border-radius:10px;padding:12px;text-align:right;">
           <p style="font-size:11px;color:var(--muted);margin-bottom:6px;">📋 <strong>خطوات التحميل:</strong></p>
           <ol style="font-size:11px;color:var(--muted);margin-right:16px;line-height:2;">
@@ -2930,14 +3108,49 @@ function closeMindMap() {
 }
 
 function exportMindMap() {
-  const svg = document.querySelector('#mindmap-container svg');
-  if (!svg) return;
-  const blob = new Blob([svg.outerHTML], {type:'image/svg+xml'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'mindmap.svg';
-  a.click();
-  showToast('💾 تم حفظ الخريطة الذهنية');
+  const svgElement = document.querySelector('#mindmap-container svg');
+  if (!svgElement) return;
+
+  showToast('📄 جاري تحضير PDF...');
+
+  // الحصول على أبعاد SVG الفعلية
+  const svgRect = svgElement.getBoundingClientRect();
+  const width = svgRect.width;
+  const height = svgRect.height;
+
+  // إنشاء مستند PDF جديد بحجم A4 عمودي
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({
+    orientation: height > width ? 'portrait' : 'landscape',
+    unit: 'pt',
+    format: 'a4'
+  });
+
+  // حساب أبعاد الصفحة بالـ pt
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = pdf.internal.pageSize.getHeight();
+
+  // حساب عامل القياس لتناسب الصورة في الصفحة مع ترك هوامش
+  const scale = Math.min(pdfWidth / width, pdfHeight / height) * 0.9; // 0.9 لهامش 10%
+  const xOffset = (pdfWidth - width * scale) / 2;
+  const yOffset = (pdfHeight - height * scale) / 2;
+
+  // تحويل SVG إلى PDF
+  pdf.svg(svgElement, {
+    x: xOffset,
+    y: yOffset,
+    width: width,
+    height: height,
+    scale: scale,
+    loadExternalStyleSheets: true, // لتحميل الأنماط من CSS
+  }).then(() => {
+    // حفظ الملف
+    pdf.save(`mindmap-${Date.now()}.pdf`);
+    showToast('✅ تم حفظ الخريطة الذهنية بصيغة PDF!');
+  }).catch(error => {
+    console.error('SVG to PDF error:', error);
+    showToast('⚠️ تعذر تحويل الخريطة إلى PDF.');
+  });
 }
 
 // ══════════════════════════════════════════
@@ -3020,12 +3233,22 @@ function flipCard() {
 function nextCard() { if (fcIndex < flashcards.length-1) { fcIndex++; renderFlashcard(); } }
 function prevCard() { if (fcIndex > 0) { fcIndex--; renderFlashcard(); } }
 function markCard(known) {
-  if (known) fcKnown.add(fcIndex); else fcKnown.delete(fcIndex);
+  if (known) {
+    // زيادة رصيد الإجابات الصحيحة
+    const meta = JSON.parse(localStorage.getItem(STORAGE_META)) || {};
+    meta.totalCorrectAnswers = (meta.totalCorrectAnswers || 0) + 1;
+    localStorage.setItem(STORAGE_META, JSON.stringify(meta));
+    updateUserRankDisplay();
+    fcKnown.add(fcIndex);
+  } else {
+    fcKnown.delete(fcIndex);
+  }
   const pct = Math.round(fcKnown.size / flashcards.length * 100);
   showToast(known ? `✅ ممتاز! ${pct}% تقدم` : '📌 مُضافة للمراجعة');
   if (fcIndex < flashcards.length-1) { fcIndex++; renderFlashcard(); }
   else showToast(`🎉 انتهيت! حفظت ${fcKnown.size}/${flashcards.length} بطاقة`);
 }
+
 function closeFlashcards() { document.getElementById('flashcardsModal').classList.remove('open'); }
 
 // ══════════════════════════════════════════
@@ -3080,7 +3303,7 @@ function showRadarResult(result, msgId) {
           <strong style="font-size:12.5px;color:var(--text);">${h.topic}</strong>
           <span style="font-size:10px;padding:1px 6px;border-radius:8px;background:${h.importance==='عالية'?'rgba(248,81,73,0.15)':'rgba(245,158,11,0.1)'};color:${h.importance==='عالية'?'var(--danger)':'var(--accent3)'};">${h.importance}</span>
         </div>
-        <div style="font-size:11px;color:var(--muted);">📊 ${h.frequency} في الامتحانات • 💡 ${h.tip}</div>
+        <div style="font-size:11px;color:var(--muted);;">📊 ${h.frequency} في الامتحانات • 💡 ${h.tip}</div>
       </div>`).join('')}
     ${result.overall_advice ? `<div style="font-size:11px;color:var(--accent2);background:rgba(34,211,238,0.05);border-radius:7px;padding:8px;margin-top:4px;">🎯 ${result.overall_advice}</div>` : ''}`;
   parent.querySelector('div').appendChild(div);
@@ -3108,6 +3331,7 @@ function buildAnalytics() {
   const colors = ['#f97316','#22d3ee','#a78bfa','#f472b6','#f59e0b'];
   const weeks = Math.max(1, Math.ceil(totalMsgs / 7));
   const avgPerDay = (totalMsgs / Math.max(weeks * 7, 1)).toFixed(1);
+  const totalCorrect = meta.totalCorrectAnswers || 0;
 
   dash.innerHTML = `
     <div class="analytics-card">
@@ -3115,6 +3339,7 @@ function buildAnalytics() {
       <div class="stat-row"><span class="stat-label">إجمالي الأسئلة المطروحة</span><span class="stat-value" style="color:var(--accent)">${totalMsgs}</span></div>
       <div class="stat-row"><span class="stat-label">المواد المدروسة</span><span class="stat-value" style="color:var(--accent2)">${Object.keys(subjects).length}</span></div>
       <div class="stat-row"><span class="stat-label">معدل الأسئلة اليومي</span><span class="stat-value" style="color:var(--purple)">${avgPerDay}</span></div>
+      <div class="stat-row"><span class="stat-label">الإجابات الصحيحة</span><span class="stat-value" style="color:var(--accent3)">${totalCorrect}</span></div>
       <div class="stat-row"><span class="stat-label">المادة الأكثر دراسة</span><span class="stat-value" style="color:var(--accent3)">${topSubjects[0]?.[0] || '—'}</span></div>
     </div>
 
@@ -3134,10 +3359,11 @@ function buildAnalytics() {
       <h4>🎯 مستوى التقدم</h4>
       ${[{label:'الاستمرارية',val:Math.min(100,totalMsgs*5),color:'#f97316'},
          {label:'تنوع المواد',val:Math.min(100,Object.keys(subjects).length*14),color:'#22d3ee'},
-         {label:'الإنتاجية',val:Math.min(100,parseFloat(avgPerDay)*33),color:'#a78bfa'}].map(p=>`
+         {label:'الإنتاجية',val:Math.min(100,parseFloat(avgPerDay)*33),color:'#a78bfa'},
+         {label:'الدقة',val:Math.min(100, totalMsgs>0 ? (totalCorrect/totalMsgs)*50 : 0),color:'#f472b6'}].map(p=>`
         <div style="margin-bottom:10px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <span style="font-size:11px;color:var(--muted);">${p.label}</span>
+            <span style="font-size:11px;color:var(--muted);;">${p.label}</span>
             <span style="font-size:11px;color:${p.color};font-weight:700;">${Math.round(p.val)}%</span>
           </div>
           <div class="progress-bar"><div class="progress-fill" style="width:${p.val}%;background:${p.color};"></div></div>
@@ -3152,6 +3378,7 @@ function buildAnalytics() {
         ${totalMsgs>=25?'<span style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);border-radius:10px;padding:6px 12px;font-size:12px;">⭐ طالب مثابر</span>':''}
         ${totalMsgs>=50?'<span style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:6px 12px;font-size:12px;">🏆 متفوق</span>':''}
         ${Object.keys(subjects).length>=5?'<span style="background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.3);border-radius:10px;padding:6px 12px;font-size:12px;">🌈 متعدد المواهب</span>':''}
+        ${totalCorrect>=20?'<span style="background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.4);border-radius:10px;padding:6px 12px;font-size:12px;">🎯 دقة عالية</span>':''}
         ${totalMsgs===0?'<p style="color:var(--muted);font-size:12px;">ابدأ المذاكرة لكسب الإنجازات! 🚀</p>':''}
       </div>
     </div>`;
@@ -3351,7 +3578,7 @@ function renderFavCards(favs) {
       <div class="fav-card-head">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
           <span class="fav-subject-tag">📚 ${fav.subject}</span>
-          <span style="font-size:10px;color:var(--muted);">📅 ${fav.date}</span>
+          <span style="font-size:10px;color:var(--muted);;">📅 ${fav.date}</span>
         </div>
         <div style="display:flex;gap:4px;">
           <button onclick="copyFav(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0 3px;" title="نسخ">📋</button>
@@ -3655,7 +3882,7 @@ function endChallenge() {
   document.getElementById('fc-card').innerHTML = `
     <div style="text-align:center;">
       <div style="font-size:48px;margin-bottom:8px;">${pct>=80?'🏆':pct>=50?'⭐':'💪'}</div>
-      <div style="font-size:24px;font-weight:900;color:var(--accent);">${challengeScore}/${challengeTotal}</div>
+      <div style="font-size:24px;font-weight:900;color:var(--accent);;">${challengeScore}/${challengeTotal}</div>
       <div style="font-size:14px;color:var(--muted);margin:6px 0">${pct}% نسبة النجاح</div>
       <div style="font-size:13px;color:${pct>=80?'var(--accent)':pct>=50?'var(--accent3)':'var(--muted)'};">${pct>=80?'ممتاز! أنت على أتم الاستعداد 🎉':pct>=50?'جيد! واصل المراجعة 📚':'استمر في المذاكرة 💪'}</div>
       <button onclick="closeFlashcards()" style="margin-top:14px;padding:8px 20px;background:linear-gradient(135deg,var(--accent),#ea580c);border:none;border-radius:8px;color:#000;font-weight:700;font-size:13px;cursor:pointer;font-family:Tajawal,sans-serif;">✅ إغلاق</button>
@@ -3864,7 +4091,7 @@ function updateUserUI(user) {
     btn.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.innerHTML='🧑‍🎓'">`;
     btn.style.padding = '0';
   } else if (user) {
-    btn.innerHTML = `<span style="font-size:13px;font-weight:700;color:var(--accent);">${(user.displayName||user.email||'?')[0].toUpperCase()}</span>`;
+    btn.innerHTML = `<span style="font-size:13px;font-weight:700;color:var(--accent);;">${(user.displayName||user.email||'?')[0].toUpperCase()}</span>`;
     btn.style.background = 'rgba(249,115,22,0.1)';
     btn.style.borderColor = 'var(--accent)';
   }
@@ -3953,129 +4180,369 @@ restoreMessages();
 renderUI();
 </script>
 
-<!-- MOBILE SUBJECT DRAWER -->
-<div class="low-data-badge" id="lowDataBadge">📡 وضع اقتصادي</div>
-<button class="mob-subj-btn" id="mobSubjBtn" onclick="openDrawer()" title="اختر المادة">📚</button>
-<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-<div class="subject-drawer" id="subjectDrawer">
-  <div class="drawer-handle"></div>
-  <div class="drawer-head">
-    <h3>📚 اختر المادة</h3>
-    <button class="drawer-close" onclick="closeDrawer()">✕</button>
-  </div>
-  <div class="drawer-body" id="drawerBody"></div>
-</div>
+<!-- NEW FEATURES: Interactive Exercise -->
+<script>
+// دالة لعرض تمرين تفاعلي في واجهة الدردشة
+function displayInteractiveExercise(exerciseData) {
+  // exerciseData = { question: "...", correctAnswer: 1500, unit: "tr/min", tolerance: 0.05 } 
+  // الصيغة صحيحة إذا كانت ضمن 5% (tolerance)
 
+  const msgs = document.getElementById('messages');
+  const exerciseId = 'ex_' + Date.now();
+  const botMsgDiv = document.createElement('div'); botMsgDiv.className = 'msg bot';
+  
+  let correctAnswerValue = exerciseData.correctAnswer;
+  let tolerance = exerciseData.tolerance || 0.0; // نسبة الخطأ المسموح بها (0.05 تعني 5%)
 
-<!-- ══ LOGIN SCREEN ══ -->
-<div id="loginScreen" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
-  <!-- Setup banner (shown when Firebase not configured) -->
-  <div id="setupBanner" style="display:none;position:absolute;top:0;left:0;right:0;background:rgba(245,158,11,0.1);border-bottom:1px solid rgba(245,158,11,0.3);padding:10px 16px;font-size:11px;color:var(--accent3);text-align:center;">
-    ⚙️ يجب إعداد Firebase أولاً — اضغط <strong style="cursor:pointer;text-decoration:underline;" onclick="document.getElementById('firebaseSetup').style.display='flex'">هنا للإعداد</strong>
-  </div>
-
-  <div style="width:100%;max-width:400px;">
-    <!-- Logo -->
-    <div style="text-align:center;margin-bottom:32px;">
-      <div style="width:70px;height:70px;background:linear-gradient(135deg,#c9271e,#006233);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 14px;box-shadow:0 0 30px rgba(249,115,22,0.3);">🇲🇦</div>
-      <h1 style="font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;" style="font-family:Rajdhani,Tajawal,sans-serif;letter-spacing:0.5px;">OFPPT AI — GE &amp; GEn</h1>
-      <p style="font-size:12px;color:var(--muted);">سجّل دخولك للوصول لجميع الميزات</p>
-    </div>
-
-    <!-- Login Card -->
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
-
-      <!-- Google Sign In Button -->
-      <button id="googleSignInBtn" onclick="signInWithGoogle()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:14px 20px;background:#fff;border:none;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;color:#333;font-family:'Tajawal',sans-serif;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.15);margin-bottom:16px;">
-        <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-        تسجيل الدخول بـ Google
-      </button>
-
-      <!-- Divider -->
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-        <div style="flex:1;height:1px;background:var(--border);"></div>
-        <span style="font-size:11px;color:var(--muted);">أو</span>
-        <div style="flex:1;height:1px;background:var(--border);"></div>
-      </div>
-
-      <!-- Guest Mode -->
-      <button onclick="continueAsGuest()" style="width:100%;padding:12px 20px;background:transparent;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);font-family:'Tajawal',sans-serif;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent2)';this.style.color='var(--accent2)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
-        👤 متابعة كزائر (بدون حفظ)
-      </button>
-
-      <!-- Benefits -->
-      <div style="margin-top:20px;padding:14px;background:rgba(249,115,22,0.04);border:1px solid rgba(249,115,22,0.1);border-radius:10px;">
-        <p style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px;">✅ مزايا تسجيل الدخول:</p>
-        <div style="font-size:11px;color:var(--muted);line-height:2;">
-          ☁️ حفظ المحادثات على السحابة<br>
-          ⭐ مزامنة المفضلة على جميع أجهزتك<br>
-          📊 تتبع تقدمك الدراسي<br>
-          🔔 تنبيهات المذاكرة الشخصية
+  botMsgDiv.innerHTML = `
+    <div class="avatar">🧪</div>
+    <div style="max-width:100%;">
+      <div class="msg-bubble" style="overflow-x: visible;">
+        <strong>✍️ تمرين تفاعلي:</strong><br>
+        ${exerciseData.question}
+        <div style="display: flex; gap: 8px; margin: 12px 0;">
+          <input type="number" id="${exerciseId}_input" placeholder="أدخل إجابتك" style="flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:8px 10px; color:var(--text); font-family:'Tajawal',sans-serif;">
+          <span style="display: flex; align-items: center; color: var(--muted);">${exerciseData.unit || ''}</span>
+        </div>
+        <div style="display: flex; gap: 5px; align-items: center;">
+          <button onclick="validateExercise('${exerciseId}', ${correctAnswerValue}, ${tolerance})" style="padding:5px 15px; background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.3); border-radius:8px; color:var(--accent); cursor:pointer; font-size:12px;">✅ تحقق</button>
+          <span id="${exerciseId}_feedback" style="font-size: 12px;"></span>
         </div>
       </div>
+    </div>`;
+  msgs.appendChild(botMsgDiv);
+  scrollDown();
+}
 
-      <!-- Loading state -->
-      <div id="loginLoading" style="display:none;text-align:center;padding:16px;">
-        <div style="width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 8px;"></div>
-        <p style="font-size:12px;color:var(--muted);">جاري تسجيل الدخول...</p>
+// دالة التحقق من الإجابة
+function validateExercise(exerciseId, correctAnswer, tolerance) {
+  const inputField = document.getElementById(`${exerciseId}_input`);
+  const feedbackSpan = document.getElementById(`${exerciseId}_feedback`);
+  if (!inputField || !feedbackSpan) return;
+
+  const userAnswer = parseFloat(inputField.value);
+  if (isNaN(userAnswer)) {
+    feedbackSpan.innerHTML = '⚠️ الرجاء إدخال رقم.';
+    feedbackSpan.style.color = 'var(--muted)';
+    return;
+  }
+
+  let isCorrect = false;
+  if (tolerance > 0) {
+    // مقارنة مع نسبة خطأ
+    const lowerBound = correctAnswer * (1 - tolerance);
+    const upperBound = correctAnswer * (1 + tolerance);
+    isCorrect = (userAnswer >= lowerBound && userAnswer <= upperBound);
+  } else {
+    // مقارنة دقيقة
+    isCorrect = (userAnswer === correctAnswer);
+  }
+
+  if (isCorrect) {
+    feedbackSpan.innerHTML = '✅ صحيح! أحسنت.';
+    feedbackSpan.style.color = 'var(--accent)';
+    // Increase correct answers count
+    const meta = JSON.parse(localStorage.getItem(STORAGE_META)) || {};
+    meta.totalCorrectAnswers = (meta.totalCorrectAnswers || 0) + 1;
+    localStorage.setItem(STORAGE_META, JSON.stringify(meta));
+    updateUserRankDisplay();
+  } else {
+    feedbackSpan.innerHTML = `❌ خطأ. حاول مرة أخرى. (الإجابة الصحيحة تقريباً: ${correctAnswer})`;
+    feedbackSpan.style.color = 'var(--danger)';
+  }
+}
+
+// إضافة تمرين تفاعلي
+function addInteractiveExercise() {
+  displayInteractiveExercise({
+    question: "محرك ثلاثي الطور، تردده 50Hz وعدد أقطابه 4. احسب السرعة التزامنية (ns) بالدورة/دقيقة.",
+    correctAnswer: 1500,
+    unit: "tr/min",
+    tolerance: 0.01 // 1% خطأ مسموح
+  });
+}
+
+// ══════════════════════════════════════════
+// VOICE SEARCH (BILINGUAL)
+// ══════════════════════════════════════════
+let voiceRecognition = null;
+let isVoiceListening = false;
+
+function startVoiceSearch() {
+  const voiceBtn = document.getElementById('voiceSearchBtn');
+  
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    showToast('⚠️ المتصفح لا يدعم البحث الصوتي.');
+    return;
+  }
+
+  if (isVoiceListening) {
+    if (voiceRecognition) voiceRecognition.stop();
+    isVoiceListening = false;
+    voiceBtn.style.background = 'transparent';
+    voiceBtn.style.borderColor = 'var(--border)';
+    return;
+  }
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  voiceRecognition = new SR();
+  
+  // تحديد اللغة بناءً على لغة الواجهة الحالية
+  voiceRecognition.lang = lang === 'ar' ? 'ar-MA' : 'fr-FR'; // العربية المغربية أو الفرنسية
+  voiceRecognition.continuous = false;
+  voiceRecognition.interimResults = true;
+
+  voiceRecognition.onstart = () => {
+    isVoiceListening = true;
+    voiceBtn.style.background = 'rgba(249,115,22,0.2)';
+    voiceBtn.style.borderColor = 'var(--accent)';
+    voiceBtn.style.color = 'var(--accent)';
+    showToast('🎤 تحدث الآن...');
+  };
+
+  voiceRecognition.onresult = (event) => {
+    const transcript = Array.from(event.results)
+      .map(result => result[0].transcript)
+      .join('');
+    
+    document.getElementById('userInput').value = transcript;
+
+    // إذا كان هذا هو النتيجة النهائية، قم بإرسال الرسالة تلقائياً
+    if (event.results[event.results.length - 1].isFinal) {
+      sendMessage();
+      voiceRecognition.stop();
+    }
+  };
+
+  voiceRecognition.onerror = (event) => {
+    console.error('Speech recognition error', event.error);
+    showToast('⚠️ خطأ في التعرف على الصوت.');
+    isVoiceListening = false;
+    voiceBtn.style.background = 'transparent';
+    voiceBtn.style.borderColor = 'var(--border)';
+  };
+
+  voiceRecognition.onend = () => {
+    isVoiceListening = false;
+    voiceBtn.style.background = 'transparent';
+    voiceBtn.style.borderColor = 'var(--border)';
+  };
+
+  voiceRecognition.start();
+}
+
+// ══════════════════════════════════════════
+// CIRCUIT SIMULATOR FUNCTIONS
+// ══════════════════════════════════════════
+function openCircuitSim() {
+  document.getElementById('circuitSimModal').classList.add('open');
+  updateCircuitSim(); // تحديث القيم عند الفتح
+}
+
+function closeCircuitSim() {
+  document.getElementById('circuitSimModal').classList.remove('open');
+}
+
+function updateCircuitSim() {
+  const voltage = parseFloat(document.getElementById('simVoltage').value);
+  const resistance = parseFloat(document.getElementById('simResistance').value);
+  
+  // تحديث الحقول الرقمية
+  document.getElementById('simVoltageNum').value = voltage;
+  document.getElementById('simResistanceNum').value = resistance;
+
+  // الحسابات
+  const current = voltage / resistance;
+  const power = voltage * current;
+
+  // عرض النتائج مع تقريب
+  document.getElementById('simCurrent').innerText = current.toFixed(3) + ' A';
+  document.getElementById('simPower').innerHTML = (power < 1000 ? power.toFixed(2) + ' W' : (power/1000).toFixed(2) + ' kW');
+}
+
+function syncSliderFromNum(type) {
+  if (type === 'voltage') {
+    const val = parseFloat(document.getElementById('simVoltageNum').value);
+    document.getElementById('simVoltage').value = val;
+  } else if (type === 'resistance') {
+    const val = parseFloat(document.getElementById('simResistanceNum').value);
+    document.getElementById('simResistance').value = val;
+  }
+  updateCircuitSim();
+}
+
+// ══════════════════════════════════════════
+// FOCUS MODE
+// ══════════════════════════════════════════
+let focusMode = false;
+
+function toggleFocusMode() {
+  focusMode = !focusMode;
+  const btn = document.getElementById('focusModeBtn');
+  const sidebar = document.querySelector('.sidebar');
+  const tabsBar = document.querySelector('.tabs-bar');
+  const levelBar = document.querySelector('.level-bar');
+  const uploadBar = document.querySelector('.upload-bar');
+  const inputHints = document.querySelector('.input-hints');
+  
+  if (focusMode) {
+    // إخفاء العناصر المشتتة
+    if (sidebar) sidebar.style.display = 'none';
+    if (tabsBar) tabsBar.style.display = 'none';
+    if (levelBar) levelBar.style.display = 'none';
+    if (uploadBar) uploadBar.style.display = 'none';
+    if (inputHints) inputHints.style.display = 'none';
+    btn.style.background = 'rgba(249,115,22,0.2)';
+    btn.style.color = 'var(--accent)';
+    btn.title = 'إنهاء وضع التركيز';
+    showToast('🧘 وضع التركيز مفعّل. ركّز على المحتوى!');
+  } else {
+    // إظهار العناصر مرة أخرى
+    if (sidebar) sidebar.style.display = 'block'; // أو 'flex' حسب الأصل
+    if (tabsBar) tabsBar.style.display = 'flex';
+    if (levelBar) levelBar.style.display = 'flex';
+    if (uploadBar) uploadBar.style.display = 'block';
+    if (inputHints) inputHints.style.display = 'flex';
+    btn.style.background = 'rgba(255,255,255,0.07)';
+    btn.style.color = 'var(--muted)';
+    btn.title = 'وضع التركيز';
+  }
+}
+
+// ══════════════════════════════════════════
+// RANK SYSTEM
+// ══════════════════════════════════════════
+const RANKS = [
+  { name: 'مبتدئ', minScore: 0, icon: '🌱' },
+  { name: 'تقني', minScore: 10, icon: '🔧' },
+  { name: 'تقني متخصص', minScore: 25, icon: '⚙️' },
+  { name: 'خبير', minScore: 50, icon: '🏆' },
+  { name: 'مهندس معتمد', minScore: 100, icon: '🚀' }
+];
+
+function getUserRank() {
+  const stats = JSON.parse(localStorage.getItem(STORAGE_META)) || {};
+  const totalScore = stats.totalCorrectAnswers || 0;
+  
+  for (let i = RANKS.length - 1; i >= 0; i--) {
+    if (totalScore >= RANKS[i].minScore) {
+      return RANKS[i];
+    }
+  }
+  return RANKS[0]; // مبتدئ
+}
+
+function updateUserRankDisplay() {
+  const rank = getUserRank();
+  const rankSpan = document.getElementById('userRankSpan');
+  if (rankSpan) {
+    rankSpan.innerHTML = `${rank.icon} ${rank.name}`;
+  }
+}
+
+// ══════════════════════════════════════════
+// SCAN WITH CAMERA (OCR)
+// ══════════════════════════════════════════
+async function scanWithCamera() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showToast('⚠️ الكاميرا غير مدعومة في هذا المتصفح.');
+    return;
+  }
+
+  // إنشاء عنصر فيديو مؤقت لالتقاط الصورة
+  const video = document.createElement('video');
+  video.setAttribute('autoplay', '');
+  video.setAttribute('playsinline', ''); // مهم للأجهزة المحمولة
+  
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); // الكاميرا الخلفية
+    video.srcObject = stream;
+    
+    // عرض الفيديو في modal بسيط للسماح للمستخدم بالتقاط الصورة
+    const modalHtml = `
+      <div class="vmodal" id="cameraModal" style="display:flex;">
+        <div class="vmodal-box" style="max-width:500px;">
+          <div class="vmodal-head">
+            <h4>📷 التقط صورة للسؤال</h4>
+            <button class="vmodal-close" onclick="document.getElementById('cameraModal').remove(); video.srcObject.getTracks().forEach(t=>t.stop());">✕</button>
+          </div>
+          <div style="padding:10px;">
+            <video id="cameraPreview" style="width:100%; border-radius:8px;"></video>
+            <div style="display:flex; gap:8px; margin-top:10px;">
+              <button onclick="captureAndScan()" style="flex:1; padding:10px; background:linear-gradient(135deg,var(--accent),#ea580c); border:none; border-radius:8px; color:#000; font-weight:700;">📸 التقاط وتحليل</button>
+              <button onclick="document.getElementById('cameraModal').remove(); video.srcObject.getTracks().forEach(t=>t.stop());" style="flex:1; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--muted);">إلغاء</button>
+            </div>
+          </div>
+        </div>
       </div>
+    `;
+    
+    // إضافة الـ modal للصفحة
+    const modalContainer = document.createElement('div');
+    modalContainer.id = 'cameraModal';
+    modalContainer.innerHTML = modalHtml;
+    document.body.appendChild(modalContainer);
+    
+    // ربط عنصر الفيديو
+    document.getElementById('cameraPreview').srcObject = stream;
+    
+    // دالة التقاط وتحليل الصورة
+    window.captureAndScan = () => {
+      const videoEl = document.getElementById('cameraPreview');
+      const canvas = document.createElement('canvas');
+      canvas.width = videoEl.videoWidth;
+      canvas.height = videoEl.videoHeight;
+      canvas.getContext('2d').drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+      
+      // إيقاف تشغيل الكاميرا
+      stream.getTracks().forEach(track => track.stop());
+      
+      // إغلاق الـ modal
+      document.getElementById('cameraModal').remove();
+      
+      // بدء OCR
+      showToast('🔍 جاري تحليل الصورة...');
+      Tesseract.recognize(
+        canvas.toDataURL('image/png'),
+        'ara+fra', // اللغات: العربية + الفرنسية
+        {
+          logger: m => console.log(m) // لمتابعة التقدم (اختياري)
+        }
+      ).then(({ data: { text } }) => {
+        if (text.trim().length > 0) {
+          document.getElementById('userInput').value = text.trim() + '\n\n(مقروء من الصورة)';
+          sendMessage();
+        } else {
+          showToast('⚠️ لم يتم العثور على نص في الصورة.');
+        }
+      }).catch(error => {
+        console.error('OCR Error:', error);
+        showToast('⚠️ فشل في قراءة النص.');
+      });
+    };
+    
+  } catch (error) {
+    console.error('Camera error:', error);
+    showToast('⚠️ تعذر الوصول إلى الكاميرا.');
+  }
+}
 
-      <!-- Error message -->
-      <div id="loginError" style="display:none;margin-top:12px;padding:10px;background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.2);border-radius:8px;font-size:12px;color:var(--danger);text-align:center;"></div>
-    </div>
+// إضافة زر المسح بالكاميرا في شريط الرفع
+function addScanButton() {
+  const uploadBar = document.querySelector('.upload-bar .upload-row');
+  if (uploadBar && !document.getElementById('scanBtn')) {
+    const scanBtn = document.createElement('button');
+    scanBtn.id = 'scanBtn';
+    scanBtn.innerHTML = '📷 مسح سؤال';
+    scanBtn.style.cssText = 'display:flex; align-items:center; gap:4px; padding:5px 11px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--muted); font-family:Tajawal,sans-serif; font-size:11px; cursor:pointer; transition:all 0.2s;';
+    scanBtn.onclick = scanWithCamera;
+    uploadBar.appendChild(scanBtn);
+  }
+}
 
-    <p style="text-align:center;font-size:10px;color:var(--muted);margin-top:16px;">
-      🔒 نستخدم Google OAuth الآمن — لا نحفظ كلمات المرور
-    </p>
-  </div>
-</div>
-
-<!-- ══ FIREBASE SETUP MODAL ══ -->
-<div id="firebaseSetup" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;padding:16px;">
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-      <h3 style="font-size:15px;font-weight:700;color:var(--accent);">⚙️ إعداد Firebase</h3>
-      <button onclick="document.getElementById('firebaseSetup').style.display='none'" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;">✕</button>
-    </div>
-
-    <div style="background:rgba(34,211,238,0.05);border:1px solid rgba(34,211,238,0.2);border-radius:10px;padding:14px;margin-bottom:18px;font-size:12px;color:var(--muted);line-height:1.9;">
-      <strong style="color:var(--accent2);">📋 خطوات الإعداد:</strong><br>
-      1. اذهب إلى <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent);">console.firebase.google.com</a><br>
-      2. أنشئ مشروعاً جديداً<br>
-      3. فعّل Authentication → Google<br>
-      4. أضف الدومين المستضاف في Authorized domains<br>
-      5. انسخ بيانات المشروع من Project Settings<br>
-      6. الصق البيانات أدناه
-    </div>
-
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
-      <input id="fb-apiKey" placeholder="apiKey" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:12px;font-family:monospace;outline:none;width:100%;">
-      <input id="fb-authDomain" placeholder="authDomain (yourapp.firebaseapp.com)" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:12px;font-family:monospace;outline:none;width:100%;">
-      <input id="fb-projectId" placeholder="projectId" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:12px;font-family:monospace;outline:none;width:100%;">
-    </div>
-
-    <div style="display:flex;gap:8px;">
-      <button onclick="saveFirebaseConfig()" style="flex:1;padding:11px;background:linear-gradient(135deg,var(--accent),#ea580c);border:none;border-radius:10px;color:#000;font-weight:700;font-size:13px;cursor:pointer;font-family:'Tajawal',sans-serif;">💾 حفظ وتفعيل</button>
-      <button onclick="document.getElementById('firebaseSetup').style.display='none'" style="padding:11px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:13px;cursor:pointer;font-family:'Tajawal',sans-serif;">إلغاء</button>
-    </div>
-  </div>
-</div>
-
-<!-- User Profile Dropdown -->
-<div id="userDropdown" style="display:none;position:fixed;top:65px;left:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;z-index:500;min-width:220px;box-shadow:0 8px 30px rgba(0,0,0,0.4);">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
-    <img id="userAvatarDropdown" src="" style="width:38px;height:38px;border-radius:50%;border:2px solid var(--accent);" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🧑‍🎓</text></svg>'">
-    <div>
-      <div id="userNameDropdown" style="font-size:13px;font-weight:700;color:var(--text);"></div>
-      <div id="userEmailDropdown" style="font-size:10px;color:var(--muted);"></div>
-    </div>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:6px;">
-    <button onclick="switchTab('analytics');closeDropdown()" style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;cursor:pointer;font-family:'Tajawal',sans-serif;text-align:right;">📊 إحصائياتي</button>
-    <button onclick="switchTab('favorites');closeDropdown()" style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;cursor:pointer;font-family:'Tajawal',sans-serif;text-align:right;">⭐ مفضلتي</button>
-    <button onclick="signOutUser()" style="padding:8px 10px;background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.2);border-radius:8px;color:var(--danger);font-size:12px;cursor:pointer;font-family:'Tajawal',sans-serif;text-align:right;">🚪 تسجيل الخروج</button>
-  </div>
-</div>
+// استدعاء الدالة عند تحميل الصفحة
+window.addEventListener('load', addScanButton);
+</script>
 
 </body>
-    </html>
+                                         </html>
