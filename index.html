@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مساعد OFPPT الذكي v5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --accent: #22c55e;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* منطقة الدردشة (Chat Area) */
+        #chat-window {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #0f172a;
+        }
+
+        .msg { margin-bottom: 10px; padding: 10px; border-radius: 8px; max-width: 80%; }
+        .user-msg { background: var(--primary); align-self: flex-end; margin-right: auto; }
+        .bot-msg { background: #334155; }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: #334155;
+            color: white;
+            font-family: 'Cairo';
+        }
+
+        button {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* الأقسام الإضافية من ملفك */
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .section-card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #334155;
+            transition: transform 0.3s;
+        }
+
+        .section-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🚀 مساعد OFPPT الذكي</h1>
+        <p>كل ما تحتاجه من دروس وتوجيه في مكان واحد</p>
+    </div>
+
+    <div class="main-container">
+        <div id="chat-window">
+            <div class="msg bot-msg">مرحباً! أنا مساعدك الذكي. كيف يمكنني مساعدتك اليوم في دروس OFPPT؟</div>
+        </div>
+        <div class="input-group">
+            <input type="text" id="user-input" placeholder="اكتب سؤالك هنا...">
+            <button onclick="sendMessage()">إرسال</button>
+        </div>
+    </div>
+
+    <div class="sections-grid">
+        <div class="section-card">
+            <h3>📚 الدروس</h3>
+            <p>وصول مباشر لجميع المجزوءات (Modules)</p>
+        </div>
+        <div class="section-card">
+            <h3>📝 الامتحانات</h3>
+            <p>نماذج امتحانات السنوات السابقة (EFM/EFF)</p>
+        </div>
+        <div class="section-card" style="border-color: var(--accent);">
+            <h3>🤖 المساعد الآلي</h3>
+            <p>مدعوم بالذكاء الاصطناعي للإجابة الفورية</p>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const window = document.getElementById('chat-window');
+            
+            if(input.value.trim() === "") return;
+
+            // إضافة رسالة المستخدم
+            window.innerHTML += `<div class="msg user-msg">${input.value}</div>`;
+            
+            // رد آلي محاكي (كما في ملفك)
+            setTimeout(() => {
+                window.innerHTML += `<div class="msg bot-msg">جاري البحث في ملفات OFPPT عن: "${input.value}"...</div>`;
+                window.scrollTop = window.scrollHeight;
+            }, 500);
+
+            input.value = "";
+        }
+    </script>
+
+</body>
+</html>
