@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Assistant OFPPT Ultra — GE & GEn ⚡</title>
+<title>Assistant OFPPT Ultra Fix — GE & GEn ⚡</title>
 <!-- PWA & SEO -->
 <link rel="manifest" id="pwa-manifest">
 <meta name="theme-color" content="#0d1117">
@@ -32,17 +32,17 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;overflow:hidden;max-width:100vw;}
+body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
 
 /* HEADER */
-.header{background:linear-gradient(135deg,#0b0f1a,#111827);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:12px;z-index:200;backdrop-filter:blur(20px);}
+.header{background:linear-gradient(135deg,#0b0f1a,#111827);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:12px;z-index:200;backdrop-filter:blur(20px);flex-shrink:0;}
 .logo{width:38px;height:38px;background:linear-gradient(135deg,#c9271e,#006233);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 15px rgba(0,208,132,0.15);flex-shrink:0;}
 .header-info h1{font-size:16px;font-weight:700;color:var(--accent);}
 .header-info p{font-size:10px;color:var(--muted);}
 .header-spacer{flex:1;}
 
-/* TABS BAR (TOP NAVIGATION) */
-.tabs-bar{display:flex;gap:4px;padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;white-space:nowrap;z-index:150;}
+/* TABS BAR */
+.tabs-bar{display:flex;gap:4px;padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;white-space:nowrap;z-index:150;flex-shrink:0;}
 .tabs-bar::-webkit-scrollbar{display:none;}
 .tab-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
 .tab-btn:hover{background:var(--surface2);color:var(--text);}
@@ -50,7 +50,7 @@ body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(-
 
 /* MAIN CONTENT */
 .main-container{flex:1;display:flex;overflow:hidden;position:relative;}
-.tab-panel{display:none;flex:1;flex-direction:column;overflow:hidden;width:100%;}
+.tab-panel{display:none;flex:1;flex-direction:column;overflow-y:auto;width:100%;padding-bottom:20px;}
 .tab-panel.active{display:flex;}
 
 /* CHAT AREA */
@@ -68,7 +68,7 @@ body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(-
 .msg.user .avatar{background:linear-gradient(135deg,#c9271e,#006233);}
 .msg.bot  .avatar{background:linear-gradient(135deg,#1a3a2a,#0a2535);border:1px solid var(--accent);}
 
-.msg-bubble{padding:14px 18px;border-radius:18px;font-size:14px;line-height:1.7;word-wrap:break-word;overflow-wrap:break-word;position:relative;}
+.msg-bubble{padding:14px 18px;border-radius:18px;font-size:14px;line-height:1.7;word-wrap:break-word;overflow-wrap:break-word;position:relative;max-width:100%;}
 .msg.user .msg-bubble{background:linear-gradient(135deg,rgba(0,208,132,0.15),rgba(34,211,238,0.1));border:1.5px solid rgba(0,208,132,0.3);border-bottom-right-radius:4px;color:var(--text);}
 .msg.bot  .msg-bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px;box-shadow:0 4px 15px rgba(0,0,0,0.25);}
 
@@ -77,10 +77,10 @@ body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(-
 .section-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--accent);margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid rgba(0,208,132,0.2);}
 .step{display:flex;gap:12px;align-items:flex-start;background:rgba(0,208,132,0.04);border-left:3px solid var(--accent);padding:10px 14px;margin:8px 0;border-radius:4px 12px 12px 4px;}
 .step-num{background:var(--accent);color:#000;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;margin-top:2px;}
-.math-display{background:rgba(34,211,238,0.05);border:1px solid rgba(34,211,238,0.15);border-radius:12px;padding:14px;margin:12px 0;text-align:center;overflow-x:auto;}
+.math-display{background:rgba(34,211,238,0.05);border:1px solid rgba(34,211,238,0.15);border-radius:12px;padding:14px;margin:12px 0;text-align:center;overflow-x:auto;max-width:100%;}
 
 /* INPUT AREA */
-.input-area{padding:12px 16px 16px;background:var(--bg);border-top:1px solid var(--border);}
+.input-area{padding:12px 16px 16px;background:var(--bg);border-top:1px solid var(--border);flex-shrink:0;}
 .input-wrapper{display:flex;align-items:flex-end;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 14px;transition:all 0.2s;}
 .input-wrapper:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,208,132,0.1);}
 .input-wrapper textarea{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:inherit;font-size:14px;resize:none;max-height:120px;line-height:1.5;}
@@ -88,7 +88,7 @@ body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(-
 .send-btn:hover{transform:scale(1.05);background:var(--accent-dark);}
 
 /* VIDEO LIBRARY */
-.vlib-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:16px;padding:20px;overflow-y:auto;flex:1;}
+.vlib-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:16px;padding:20px;}
 .vcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all 0.3s;}
 .vcard:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 8px 25px rgba(0,0,0,0.4);}
 .vcard-thumb{width:100%;aspect-ratio:16/9;background:#000;position:relative;}
@@ -100,9 +100,9 @@ body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(-
 .vcard-title{font-size:14px;font-weight:600;color:var(--text);line-height:1.4;}
 
 /* SIMULATOR */
-.sim-container{display:flex;flex:1;overflow:hidden;padding:20px;gap:20px;}
-.sim-canvas-area{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:16px;position:relative;display:flex;align-items:center;justify-content:center;}
-.sim-controls{width:300px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:20px;}
+.sim-container{display:flex;flex:1;overflow-y:auto;padding:20px;gap:20px;flex-wrap:wrap;}
+.sim-canvas-area{flex:2;min-width:300px;min-height:300px;background:var(--surface);border:1px solid var(--border);border-radius:16px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.sim-controls{flex:1;min-width:280px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:20px;}
 .sim-param{display:flex;flex-direction:column;gap:8px;}
 .sim-label{font-size:12px;font-weight:700;color:var(--muted);display:flex;justify-content:space-between;}
 .sim-label span{color:var(--accent);}
@@ -111,22 +111,38 @@ body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(-
 .stat-item{display:flex;justify-content:space-between;font-size:13px;}
 .stat-val{font-family:'Fira Code', monospace;color:var(--accent2);font-weight:700;}
 
+/* EXAM BANK */
+.exam-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:16px;padding:20px;}
+.exam-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;transition:all 0.3s;}
+.exam-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.exam-header{display:flex;justify-content:space-between;margin-bottom:12px;align-items:center;}
+.exam-badge{font-size:10px;padding:3px 8px;border-radius:6px;font-weight:700;text-transform:uppercase;}
+.badge-efm{background:rgba(34,211,238,0.1);color:var(--accent2);}
+.badge-efe{background:rgba(167,139,250,0.1);color:var(--purple);}
+.exam-title{font-size:15px;font-weight:700;margin-bottom:8px;color:var(--text);}
+.exam-meta{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.exam-actions{display:flex;gap:8px;}
+
 /* MODALS */
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:20px;}
 .modal.open{display:flex;}
 .modal-content{background:var(--surface);border:1px solid var(--border);border-radius:20px;width:100%;max-width:800px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 25px 50px rgba(0,0,0,0.5);}
-.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.modal-body{flex:1;overflow-y:auto;padding:20px;}
 .modal-close{background:var(--surface2);border:none;color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;}
 
 /* UTILS */
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);padding:12px 24px;border-radius:12px;font-size:13px;z-index:2000;box-shadow:0 10px 30px rgba(0,0,0,0.4);animation:toastIn 0.3s ease;display:none;}
 @keyframes toastIn{from{transform:translate(-50%, 20px);opacity:0}to{transform:translate(-50%, 0);opacity:1}}
 
-/* MOBILE */
+/* MOBILE FIXES */
 @media(max-width:768px){
   .sim-container{flex-direction:column;}
   .sim-controls{width:100%;}
   .msg{max-width:95%;}
+  .header-info p{display:none;}
+  .tabs-bar{padding:6px 8px;}
+  .tab-btn{padding:6px 12px;font-size:12px;}
 }
 </style>
 </head>
@@ -149,28 +165,27 @@ body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(-
 <!-- TOP TABS NAVIGATION -->
 <div class="tabs-bar">
   <button class="tab-btn active" onclick="switchTab('chat', this)">💬 <span id="txt-tab-chat">Chat IA</span></button>
+  <button class="tab-btn" onclick="switchTab('exams', this)">📄 <span id="txt-tab-exams">Examens</span></button>
   <button class="tab-btn" onclick="switchTab('simulator', this)">🔧 <span id="txt-tab-sim">Simulateur</span></button>
-  <button class="tab-btn" onclick="switchTab('videos', this)">🎥 <span id="txt-tab-videos">Vidéos & Cours</span></button>
+  <button class="tab-btn" onclick="switchTab('videos', this)">🎥 <span id="txt-tab-videos">Vidéos</span></button>
   <button class="tab-btn" onclick="switchTab('exercises', this)">✏️ <span id="txt-tab-ex">Exercices</span></button>
-  <button class="tab-btn" onclick="switchTab('scanner', this)">📷 <span id="txt-tab-ocr">Scanner OCR</span></button>
 </div>
 
 <!-- MAIN CONTENT -->
 <div class="main-container">
   
   <!-- TAB: CHAT -->
-  <div class="tab-panel active" id="panel-chat">
+  <div class="tab-panel active" id="panel-chat" style="overflow:hidden; padding-bottom:0;">
     <div class="chat-area">
       <div class="messages" id="chat-messages">
         <!-- Welcome Card -->
         <div class="welcome-card" style="text-align:center; padding:40px 20px;">
           <div class="big-emoji" style="font-size:50px; margin-bottom:15px;">🚀</div>
           <h2 id="txt-welcome-title" style="color:var(--accent); margin-bottom:10px;">Bienvenue sur l'Assistant OFPPT</h2>
-          <p id="txt-welcome-desc" style="color:var(--muted); max-width:500px; margin:0 auto 20px;">Posez vos questions techniques sur le Génie Électrique ou Énergétique. Je réponds avec des schémas, des formules LaTeX et des explications détaillées.</p>
+          <p id="txt-welcome-desc" style="color:var(--muted); max-width:500px; margin:0 auto 20px;">Posez vos questions techniques sur le Génie Électrique ou Énergétique.</p>
           <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
             <button class="tab-btn" onclick="sendQuick('Loi d\'Ohm')">Loi d'Ohm</button>
             <button class="tab-btn" onclick="sendQuick('Moteur Asynchrone')">Moteur Asynchrone</button>
-            <button class="tab-btn" onclick="sendQuick('Circuit RC')">Circuit RC</button>
           </div>
         </div>
       </div>
@@ -180,6 +195,13 @@ body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(-
           <button class="send-btn" onclick="handleSend()">➤</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- TAB: EXAMS -->
+  <div class="tab-panel" id="panel-exams">
+    <div class="exam-grid" id="exam-grid">
+      <!-- Exams injected here -->
     </div>
   </div>
 
@@ -214,41 +236,33 @@ body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(-
   <!-- TAB: VIDEOS -->
   <div class="tab-panel" id="panel-videos">
     <div class="vlib-grid" id="video-grid">
-      <!-- Videos will be injected here -->
+      <!-- Videos injected here -->
     </div>
   </div>
 
   <!-- TAB: EXERCISES -->
-  <div class="tab-panel" id="panel-exercises" style="overflow-y:auto; padding:20px;">
-    <div id="exercise-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(350px, 1fr)); gap:20px;">
-      <!-- Exercises will be injected here -->
-    </div>
-  </div>
-
-  <!-- TAB: SCANNER -->
-  <div class="tab-panel" id="panel-scanner" style="align-items:center; justify-content:center; padding:40px;">
-    <div style="background:var(--surface); border:2px dashed var(--border); border-radius:20px; padding:40px; text-align:center; max-width:500px; width:100%;">
-      <div style="font-size:60px; margin-bottom:20px;">📷</div>
-      <h3 id="txt-ocr-title" style="margin-bottom:10px;">Scanner d'Exercices</h3>
-      <p id="txt-ocr-desc" style="color:var(--muted); margin-bottom:30px;">Prenez une photo de votre exercice papier ou d'un schéma pour obtenir une solution détaillée.</p>
-      <input type="file" id="ocr-upload" accept="image/*" style="display:none;" onchange="handleOCR(this)">
-      <button class="tab-btn active" style="width:100%; padding:15px; justify-content:center;" onclick="document.getElementById('ocr-upload').click()">Sélectionner une image</button>
+  <div class="tab-panel" id="panel-exercises">
+    <div id="exercise-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:20px; padding:20px;">
+      <!-- Exercises injected here -->
     </div>
   </div>
 
 </div>
 
-<!-- VIDEO MODAL -->
+<!-- MODALS -->
 <div class="modal" id="video-modal">
   <div class="modal-content">
     <div class="modal-header">
-      <h2 id="modal-video-title">Titre de la vidéo</h2>
+      <h2 id="modal-video-title">Vidéo</h2>
       <button class="modal-close" onclick="closeVideo()">✕</button>
     </div>
     <div style="aspect-ratio:16/9; background:#000;">
       <iframe id="video-iframe" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
     </div>
-    <div style="padding:20px;" id="modal-video-desc">Description...</div>
+    <div class="modal-body" id="modal-video-desc">Description...</div>
+    <div style="padding:10px 20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end;">
+       <a id="yt-link" href="#" target="_blank" class="tab-btn active">Voir sur YouTube</a>
+    </div>
   </div>
 </div>
 
@@ -256,9 +270,8 @@ body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(-
 
 <script>
 // ═══════════════════════════════════════════════════════════
-// CONFIGURATION & DATA
+// DATA
 // ═══════════════════════════════════════════════════════════
-
 let currentLang = 'fr';
 let userScore = parseInt(localStorage.getItem('ofppt_score') || '0');
 
@@ -266,76 +279,52 @@ const translations = {
   fr: {
     appTitle: "Assistant OFPPT Ultra",
     appSub: "GE & GEn • Plateforme Intelligente",
-    tabChat: "Chat IA",
-    tabSim: "Simulateur",
-    tabVideos: "Vidéos & Cours",
-    tabEx: "Exercices",
-    tabOcr: "Scanner OCR",
+    tabChat: "Chat IA", tabSim: "Simulateur", tabVideos: "Vidéos", tabEx: "Exercices", tabExams: "Examens",
     welcomeTitle: "Bienvenue sur l'Assistant OFPPT",
-    welcomeDesc: "Posez vos questions techniques sur le Génie Électrique ou Énergétique. Je réponds avec des schémas, des formules LaTeX et des explications détaillées.",
-    simParams: "Paramètres du Circuit",
-    simU: "Tension (U)",
-    simR: "Résistance (R)",
-    simI: "Intensité (I)",
-    simP: "Puissance (P)",
-    simLive: "⚡ Visualisation en temps réel",
-    ocrTitle: "Scanner d'Exercices",
-    ocrDesc: "Prenez une photo de votre exercice papier ou d'un schéma pour obtenir une solution détaillée.",
-    correct: "✅ Correct !",
-    incorrect: "❌ Incorrect, réessayez.",
-    scoreAdded: "Points ajoutés ! Score total: "
+    welcomeDesc: "Posez vos questions techniques sur le Génie Électrique ou Énergétique.",
+    simParams: "Paramètres du Circuit", simU: "Tension (U)", simR: "Résistance (R)", simI: "Intensité (I)", simP: "Puissance (P)", simLive: "⚡ Temps réel",
+    correct: "✅ Correct !", incorrect: "❌ Incorrect !", scoreAdded: "Points ajoutés ! Total: ",
+    viewExam: "Voir l'examen", download: "Télécharger"
   },
   ar: {
     appTitle: "مساعد OFPPT الفائق",
     appSub: "GE & GEn • منصة ذكية",
-    tabChat: "محادثة ذكية",
-    tabSim: "المحاكي",
-    tabVideos: "فيديوهات ودروس",
-    tabEx: "تمارين",
-    tabOcr: "ماسح OCR",
+    tabChat: "محادثة", tabSim: "المحاكي", tabVideos: "فيديوهات", tabEx: "تمارين", tabExams: "امتحانات",
     welcomeTitle: "مرحباً بك في مساعد OFPPT",
-    welcomeDesc: "اطرح أسئلتك التقنية حول الهندسة الكهربائية أو هندسة الطاقة. سأجيبك بالمخططات وصيغ LaTeX وشروحات مفصلة.",
-    simParams: "بارامترات الدارة",
-    simU: "الجهد (U)",
-    simR: "المقاومة (R)",
-    simI: "التيار (I)",
-    simP: "القدرة (P)",
-    simLive: "⚡ محاكاة مباشرة",
-    ocrTitle: "ماسح التمارين",
-    ocrDesc: "التقط صورة لتمرينك الورقي أو لمخطط للحصول على حل مفصل.",
-    correct: "✅ صحيح !",
-    incorrect: "❌ خطأ، حاول مرة أخرى.",
-    scoreAdded: "تمت إضافة النقاط! المجموع: "
+    welcomeDesc: "اطرح أسئلتك التقنية حول الهندسة الكهربائية أو هندسة الطاقة.",
+    simParams: "بارامترات الدارة", simU: "الجهد (U)", simR: "المقاومة (R)", simI: "التيار (I)", simP: "القدرة (P)", simLive: "⚡ محاكاة مباشرة",
+    correct: "✅ صحيح !", incorrect: "❌ خطأ !", scoreAdded: "تمت إضافة النقاط! المجموع: ",
+    viewExam: "عرض الامتحان", download: "تحميل"
   }
 };
 
 const videoData = [
-  { id: "v1", title: "Moteur Asynchrone Triphasé", tag: "GE", thumb: "https://img.youtube.com/vi/AQqyG7raVAY/maxresdefault.jpg", url: "https://www.youtube.com/embed/AQqyG7raVAY", desc: "Comprendre le fonctionnement du champ magnétique tournant et du glissement." },
-  { id: "v2", title: "Installation Photovoltaïque", tag: "GEn", thumb: "https://img.youtube.com/vi/09p6UqSjWio/maxresdefault.jpg", url: "https://www.youtube.com/embed/09p6UqSjWio", desc: "Calcul de dimensionnement d'un système solaire autonome." },
-  { id: "v3", title: "Automates Programmables (PLC)", tag: "GE", thumb: "https://img.youtube.com/vi/X_z2L1h-S6Y/maxresdefault.jpg", url: "https://www.youtube.com/embed/X_z2L1h-S6Y", desc: "Introduction au langage Ladder et programmation de base." },
-  { id: "v4", title: "Pompe à Chaleur & Froid", tag: "GEn", thumb: "https://img.youtube.com/vi/7j_Y8_X8X8X/maxresdefault.jpg", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", desc: "Cycle thermodynamique et composants principaux." }
+  { id: "v1", title: "Moteur Asynchrone Triphasé", tag: "GE", thumb: "https://img.youtube.com/vi/AQqyG7raVAY/maxresdefault.jpg", url: "https://www.youtube.com/embed/AQqyG7raVAY", yt: "https://youtu.be/AQqyG7raVAY", desc: "Fonctionnement du champ magnétique tournant." },
+  { id: "v2", title: "Installation Photovoltaïque", tag: "GEn", thumb: "https://img.youtube.com/vi/09p6UqSjWio/maxresdefault.jpg", url: "https://www.youtube.com/embed/09p6UqSjWio", yt: "https://youtu.be/09p6UqSjWio", desc: "Dimensionnement d'un système solaire." },
+  { id: "v3", title: "Automates Programmables (PLC)", tag: "GE", thumb: "https://img.youtube.com/vi/X_z2L1h-S6Y/maxresdefault.jpg", url: "https://www.youtube.com/embed/X_z2L1h-S6Y", yt: "https://youtu.be/X_z2L1h-S6Y", desc: "Introduction au langage Ladder." }
+];
+
+const examData = [
+  { id: "ex1", type: "EFM", title: "EFM 2024 - Machines Électriques", module: "M201", year: "2024", file: "#" },
+  { id: "ex2", type: "EFE", title: "EFE 2023 - Automatisme", module: "M105", year: "2023", file: "#" },
+  { id: "ex3", type: "EFM", title: "EFM 2024 - Énergie Solaire", module: "M302", year: "2024", file: "#" }
 ];
 
 const exerciseData = [
-  { id: "e1", title: "Loi d'Ohm & Puissance", q: "Un radiateur de $R=50\\Omega$ est branché sur $230V$. Calculez $I$ et $P$.", ans: 4.6, unit: "A", hint: "Utilisez $I = U/R$ et $P = U \\times I$" },
-  { id: "e2", title: "Moteur Asynchrone", q: "Un moteur a une vitesse de synchronisme $n_s = 1500$ tr/min et tourne à $n = 1440$ tr/min. Calculez le glissement $g$ en %.", ans: 4, unit: "%", hint: "$g = (n_s - n) / n_s$" },
-  { id: "e3", title: "Transformateur", q: "Un transformateur $220V/24V$ alimente une charge de $100W$. Calculez le courant secondaire $I_2$.", ans: 4.17, unit: "A", hint: "$I_2 = P / U_2$" }
+  { id: "e1", title: "Loi d'Ohm", q: "Un radiateur de $R=50\\Omega$ est branché sur $230V$. Calculez $I$.", ans: 4.6, unit: "A" },
+  { id: "e2", title: "Moteur Asynchrone", q: "Si $n_s = 1500$ tr/min et $n = 1440$ tr/min, calculez le glissement $g$ (en %).", ans: 4, unit: "%" }
 ];
 
 // ═══════════════════════════════════════════════════════════
-// CORE FUNCTIONS
+// LOGIC
 // ═══════════════════════════════════════════════════════════
 
 function setLang(lang) {
   currentLang = lang;
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-  
-  // Update buttons
   document.getElementById('btn-lang-fr').classList.toggle('active', lang === 'fr');
   document.getElementById('btn-lang-ar').classList.toggle('active', lang === 'ar');
-  
-  // Update texts
   const t = translations[lang];
   document.getElementById('txt-app-title').textContent = t.appTitle;
   document.getElementById('txt-app-sub').textContent = t.appSub;
@@ -343,7 +332,7 @@ function setLang(lang) {
   document.getElementById('txt-tab-sim').textContent = t.tabSim;
   document.getElementById('txt-tab-videos').textContent = t.tabVideos;
   document.getElementById('txt-tab-ex').textContent = t.tabEx;
-  document.getElementById('txt-tab-ocr').textContent = t.tabOcr;
+  document.getElementById('txt-tab-exams').textContent = t.tabExams;
   document.getElementById('txt-welcome-title').textContent = t.welcomeTitle;
   document.getElementById('txt-welcome-desc').textContent = t.welcomeDesc;
   document.getElementById('txt-sim-params').textContent = t.simParams;
@@ -352,83 +341,46 @@ function setLang(lang) {
   document.getElementById('txt-sim-i').textContent = t.simI;
   document.getElementById('txt-sim-p').textContent = t.simP;
   document.getElementById('txt-sim-live').textContent = t.simLive;
-  document.getElementById('txt-ocr-title').textContent = t.ocrTitle;
-  document.getElementById('txt-ocr-desc').textContent = t.ocrDesc;
-  
   renderExercises();
-  showToast(lang === 'fr' ? "Langue changée" : "تم تغيير اللغة");
+  renderExams();
 }
 
 function switchTab(tabId, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tabs-bar .tab-btn').forEach(b => b.classList.remove('active'));
-  
   document.getElementById('panel-' + tabId).classList.add('active');
   btn.classList.add('active');
-  
   if (tabId === 'simulator') setTimeout(initSim, 100);
 }
-
-// ═══════════════════════════════════════════════════════════
-// CHAT SYSTEM
-// ═══════════════════════════════════════════════════════════
 
 function handleSend() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
-  
   appendMessage('user', text);
   input.value = '';
   input.style.height = 'auto';
-  
-  // Simulated AI Logic
   setTimeout(() => {
-    let reply = "";
-    if (text.toLowerCase().includes('ohm')) {
-      reply = `La **Loi d'Ohm** est fondamentale en électricité. Elle établit la relation entre la tension $U$, l'intensité $I$ et la résistance $R$.<br><br><div class="math-display">$$U = R \\times I$$</div><div class="section-title">⚡ Paramètres:</div><div class="step"><div class="step-num">1</div><div>$U$: Tension en Volts (V)</div></div><div class="step"><div class="step-num">2</div><div>$R$: Résistance en Ohms ($\\Omega$)</div></div><div class="step"><div class="step-num">3</div><div>$I$: Intensité en Ampères (A)</div></div>`;
-    } else if (text.toLowerCase().includes('moteur')) {
-      reply = `Le **Moteur Asynchrone** transforme l'énergie électrique en énergie mécanique.<br><br><div class="section-title">⚙️ Formules Clés:</div><div class="step"><div class="step-num">1</div><div>Vitesse de synchronisme: $n_s = f/p$</div></div><div class="step"><div class="step-num">2</div><div>Glissement: $g = (n_s - n)/n_s$</div></div><div class="step"><div class="step-num">3</div><div>Puissance absorbée: $P_a = U \\cdot I \\cdot \\sqrt{3} \\cdot \\cos\\phi$</div></div>`;
-    } else {
-      reply = "Je suis votre assistant spécialisé OFPPT. Je peux vous aider sur les circuits électriques, les moteurs, le solaire ou l'automatisation. Posez-moi une question technique !";
-    }
+    let reply = "Je suis votre assistant spécialisé OFPPT. Posez-moi une question technique !";
+    if (text.toLowerCase().includes('ohm')) reply = `La **Loi d'Ohm**: <div class="math-display">$$U = R \\times I$$</div>`;
     appendMessage('bot', reply);
-  }, 1000);
-}
-
-function sendQuick(text) {
-  document.getElementById('chat-input').value = text;
-  handleSend();
+  }, 800);
 }
 
 function appendMessage(role, content) {
   const container = document.getElementById('chat-messages');
   const msg = document.createElement('div');
   msg.className = `msg ${role}`;
-  msg.innerHTML = `
-    <div class="avatar">${role === 'user' ? '👤' : '⚡'}</div>
-    <div class="msg-bubble">${content}</div>
-  `;
+  msg.innerHTML = `<div class="avatar">${role==='user'?'👤':'⚡'}</div><div class="msg-bubble">${content}</div>`;
   container.appendChild(msg);
   container.scrollTop = container.scrollHeight;
-  
-  if (role === 'bot') {
-    renderMathInElement(msg, {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$', right: '$', display: false}
-      ]
-    });
-  }
+  if (role === 'bot') renderMathInElement(msg, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}] });
 }
 
-// ═══════════════════════════════════════════════════════════
-// SIMULATOR LOGIC (PHYSICS ENGINE)
-// ═══════════════════════════════════════════════════════════
+function sendQuick(t) { document.getElementById('chat-input').value = t; handleSend(); }
 
-let simCtx, simCanvas;
-let electronPos = 0;
-
+// SIMULATOR
+let simCtx, simCanvas, electronPos = 0;
 function initSim() {
   simCanvas = document.getElementById('sim-canvas');
   simCtx = simCanvas.getContext('2d');
@@ -436,190 +388,104 @@ function initSim() {
   simCanvas.height = simCanvas.offsetHeight;
   requestAnimationFrame(drawLoop);
 }
-
 function updateSim() {
-  const u = document.getElementById('slider-u').value;
-  const r = document.getElementById('slider-r').value;
-  const i = u / r;
-  const p = u * i;
-  
+  const u = document.getElementById('slider-u').value, r = document.getElementById('slider-r').value;
+  const i = u / r, p = u * i;
   document.getElementById('val-u').textContent = u + " V";
   document.getElementById('val-r').textContent = r + " Ω";
   document.getElementById('val-i').textContent = i.toFixed(3) + " A";
   document.getElementById('val-p').textContent = p.toFixed(2) + " W";
 }
-
 function drawLoop() {
   if (!simCtx) return;
-  const u = document.getElementById('slider-u').value;
-  const r = document.getElementById('slider-r').value;
-  const i = u / r;
-  
+  const u = document.getElementById('slider-u').value, r = document.getElementById('slider-r').value, i = u / r;
   simCtx.clearRect(0, 0, simCanvas.width, simCanvas.height);
-  
-  const centerX = simCanvas.width / 2;
-  const centerY = simCanvas.height / 2;
-  const w = 300;
-  const h = 200;
-  
-  // Circuit Wire
-  simCtx.strokeStyle = '#2d3a52';
-  simCtx.lineWidth = 4;
-  simCtx.strokeRect(centerX - w/2, centerY - h/2, w, h);
-  
-  // Components
-  simCtx.fillStyle = '#0b0f1a';
-  // Generator
-  simCtx.fillRect(centerX - w/2 - 10, centerY - 30, 20, 60);
-  simCtx.strokeStyle = varColor('--accent');
-  simCtx.strokeRect(centerX - w/2 - 10, centerY - 30, 20, 60);
-  
-  // Resistor
-  simCtx.fillRect(centerX + w/2 - 10, centerY - 40, 20, 80);
-  simCtx.strokeStyle = varColor('--accent2');
-  simCtx.strokeRect(centerX + w/2 - 10, centerY - 40, 20, 80);
-  
-  // Electrons (Animation)
-  const speed = i * 5;
-  electronPos += speed;
-  if (electronPos > (w + h) * 2) electronPos = 0;
-  
-  drawElectron(centerX, centerY, w, h, electronPos);
-  drawElectron(centerX, centerY, w, h, (electronPos + 100) % ((w + h) * 2));
-  drawElectron(centerX, centerY, w, h, (electronPos + 200) % ((w + h) * 2));
-  
+  const cx = simCanvas.width/2, cy = simCanvas.height/2, w = 240, h = 160;
+  simCtx.strokeStyle = '#2d3a52'; simCtx.lineWidth = 4; simCtx.strokeRect(cx-w/2, cy-h/2, w, h);
+  simCtx.fillStyle = '#0b0f1a'; simCtx.fillRect(cx-w/2-10, cy-30, 20, 60); // Gen
+  simCtx.fillRect(cx+w/2-10, cy-40, 20, 80); // Res
+  simCtx.strokeStyle = '#00d084'; simCtx.strokeRect(cx-w/2-10, cy-30, 20, 60);
+  simCtx.strokeStyle = '#38bdf8'; simCtx.strokeRect(cx+w/2-10, cy-40, 20, 80);
+  electronPos += i * 5; if (electronPos > (w+h)*2) electronPos = 0;
+  drawE(cx, cy, w, h, electronPos); drawE(cx, cy, w, h, (electronPos+150)%((w+h)*2));
   requestAnimationFrame(drawLoop);
 }
-
-function drawElectron(cx, cy, w, h, pos) {
-  let x, y;
-  const perimeter = (w + h) * 2;
-  if (pos < w) { x = cx - w/2 + pos; y = cy - h/2; }
-  else if (pos < w + h) { x = cx + w/2; y = cy - h/2 + (pos - w); }
-  else if (pos < 2*w + h) { x = cx + w/2 - (pos - (w + h)); y = cy + h/2; }
-  else { x = cx - w/2; y = cy + h/2 - (pos - (2*w + h)); }
-  
-  simCtx.fillStyle = varColor('--accent3');
-  simCtx.beginPath();
-  simCtx.arc(x, y, 4, 0, Math.PI * 2);
-  simCtx.fill();
+function drawE(cx, cy, w, h, p) {
+  let x, y, per = (w+h)*2;
+  if (p < w) { x = cx-w/2+p; y = cy-h/2; } else if (p < w+h) { x = cx+w/2; y = cy-h/2+(p-w); }
+  else if (p < 2*w+h) { x = cx+w/2-(p-(w+h)); y = cy+h/2; } else { x = cx-w/2; y = cy+h/2-(p-(2*w+h)); }
+  simCtx.fillStyle = '#facc15'; simCtx.beginPath(); simCtx.arc(x, y, 4, 0, 7); simCtx.fill();
 }
 
-function varColor(name) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
-
-// ═══════════════════════════════════════════════════════════
-// EXERCISES & CONTENT
-// ═══════════════════════════════════════════════════════════
-
-function renderExercises() {
-  const container = document.getElementById('exercise-list');
-  container.innerHTML = '';
-  exerciseData.forEach(ex => {
+// EXAMS
+function renderExams() {
+  const grid = document.getElementById('exam-grid');
+  grid.innerHTML = '';
+  examData.forEach(ex => {
     const card = document.createElement('div');
-    card.className = 'sim-stats';
-    card.style.background = 'var(--surface)';
-    card.style.border = '1px solid var(--border)';
+    card.className = 'exam-card';
     card.innerHTML = `
-      <h4 style="color:var(--accent); margin-bottom:10px;">${ex.title}</h4>
-      <p style="margin-bottom:15px; font-size:14px;">${ex.q}</p>
-      <div style="display:flex; gap:10px;">
-        <input type="number" id="ans-${ex.id}" placeholder="Réponse" style="flex:1; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text);">
-        <button class="tab-btn active" onclick="checkAnswer('${ex.id}', ${ex.ans})">${currentLang === 'fr' ? 'Vérifier' : 'تحقق'}</button>
+      <div class="exam-header">
+        <span class="exam-badge badge-${ex.type.toLowerCase()}">${ex.type}</span>
+        <span style="font-size:11px; color:var(--accent3);">${ex.module}</span>
       </div>
-      <div id="res-${ex.id}" style="margin-top:10px; font-size:12px;"></div>
-    `;
-    container.appendChild(card);
-    renderMathInElement(card, { delimiters: [{left: '$', right: '$', display: false}] });
-  });
-}
-
-function checkAnswer(id, correct) {
-  const val = parseFloat(document.getElementById('ans-' + id).value);
-  const res = document.getElementById('res-' + id);
-  if (Math.abs(val - correct) < 0.1) {
-    res.innerHTML = `<span style="color:var(--success);">${translations[currentLang].correct}</span>`;
-    addScore(50);
-  } else {
-    res.innerHTML = `<span style="color:var(--danger);">${translations[currentLang].incorrect}</span>`;
-  }
-}
-
-function renderVideos() {
-  const grid = document.getElementById('video-grid');
-  videoData.forEach(v => {
-    const card = document.createElement('div');
-    card.className = 'vcard';
-    card.onclick = () => openVideo(v);
-    card.innerHTML = `
-      <div class="vcard-thumb">
-        <img src="${v.thumb}">
-        <div class="vcard-play"><div class="vcard-play-btn">▶</div></div>
-      </div>
-      <div class="vcard-info">
-        <span class="vcard-tag">${v.tag}</span>
-        <h4 class="vcard-title">${v.title}</h4>
+      <h4 class="exam-title">${ex.title}</h4>
+      <p class="exam-meta">Année: ${ex.year} • Session Normale</p>
+      <div class="exam-actions">
+        <button class="tab-btn active" style="font-size:11px; flex:1;" onclick="showToast('Ouverture de '+ '${ex.title}')">${translations[currentLang].viewExam}</button>
       </div>
     `;
     grid.appendChild(card);
   });
 }
 
-function openVideo(v) {
-  document.getElementById('modal-video-title').textContent = v.title;
-  document.getElementById('modal-video-desc').textContent = v.desc;
-  document.getElementById('video-iframe').src = v.url;
-  document.getElementById('video-modal').classList.add('open');
+// VIDEOS
+function renderVideos() {
+  const grid = document.getElementById('video-grid');
+  videoData.forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'vcard';
+    card.onclick = () => {
+      document.getElementById('modal-video-title').textContent = v.title;
+      document.getElementById('modal-video-desc').textContent = v.desc;
+      document.getElementById('video-iframe').src = v.url;
+      document.getElementById('yt-link').href = v.yt;
+      document.getElementById('video-modal').classList.add('open');
+    };
+    card.innerHTML = `<div class="vcard-thumb"><img src="${v.thumb}"><div class="vcard-play"><div class="vcard-play-btn">▶</div></div></div>
+      <div class="vcard-info"><span class="vcard-tag">${v.tag}</span><h4 class="vcard-title">${v.title}</h4></div>`;
+    grid.appendChild(card);
+  });
 }
+function closeVideo() { document.getElementById('video-modal').classList.remove('open'); document.getElementById('video-iframe').src = ''; }
 
-function closeVideo() {
-  document.getElementById('video-modal').classList.remove('open');
-  document.getElementById('video-iframe').src = '';
+// EXERCISES
+function renderExercises() {
+  const container = document.getElementById('exercise-list');
+  container.innerHTML = '';
+  exerciseData.forEach(ex => {
+    const card = document.createElement('div');
+    card.className = 'sim-stats'; card.style.background = 'var(--surface)';
+    card.innerHTML = `<h4 style="color:var(--accent);">${ex.title}</h4><p style="margin:10px 0; font-size:13px;">${ex.q}</p>
+      <div style="display:flex; gap:8px;"><input type="number" id="ans-${ex.id}" style="flex:1; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text);">
+      <button class="tab-btn active" onclick="checkAnswer('${ex.id}', ${ex.ans})">Vérifier</button></div><div id="res-${ex.id}" style="margin-top:8px;"></div>`;
+    container.appendChild(card);
+    renderMathInElement(card, { delimiters: [{left: '$', right: '$', display: false}] });
+  });
 }
-
-function addScore(pts) {
-  userScore += pts;
-  localStorage.setItem('ofppt_score', userScore);
-  showToast(translations[currentLang].scoreAdded + userScore);
+function checkAnswer(id, cor) {
+  const val = parseFloat(document.getElementById('ans-'+id).value);
+  const res = document.getElementById('res-'+id);
+  if (Math.abs(val - cor) < 0.1) { res.innerHTML = `<span style="color:var(--success);">${translations[currentLang].correct}</span>`; addScore(50); }
+  else { res.innerHTML = `<span style="color:var(--danger);">${translations[currentLang].incorrect}</span>`; }
 }
+function addScore(p) { userScore += p; localStorage.setItem('ofppt_score', userScore); showToast(translations[currentLang].scoreAdded + userScore); }
+function addSimScore() { addScore(20); }
+function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
 
-function addSimScore() {
-  addScore(20);
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 3000);
-}
-
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = el.scrollHeight + 'px';
-}
-
-// ═══════════════════════════════════════════════════════════
-// INITIALIZATION
-// ═══════════════════════════════════════════════════════════
-
-document.addEventListener('DOMContentLoaded', () => {
-  renderVideos();
-  renderExercises();
-  updateSim();
-  
-  // OCR Placeholder
-  window.handleOCR = function(input) {
-    if (input.files && input.files[0]) {
-      showToast(currentLang === 'fr' ? "Analyse OCR en cours..." : "جاري تحليل الصورة...");
-      setTimeout(() => {
-        switchTab('chat', document.querySelectorAll('.tab-btn')[0]);
-        appendMessage('bot', "Analyse terminée. L'exercice concerne un **Moteur à courant continu**. Voici la solution...");
-      }, 2000);
-    }
-  };
-});
+document.addEventListener('DOMContentLoaded', () => { renderVideos(); renderExercises(); renderExams(); updateSim(); });
 </script>
 </body>
 </html>
+
