@@ -258,6 +258,12 @@ body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min
 
 <script>
 // ============================================
+// API CONFIGURATION (OpenRouter)
+// ============================================
+const OPENROUTER_API_KEY = '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';
+const OPENROUTER_MODEL = 'deepseek/deepseek-chat-v3-0324:free';
+
+// ============================================
 // CONFIGURATION LANGUE (FRANÇAIS PAR DÉFAUT)
 // ============================================
 let currentLang = 'fr';
@@ -279,6 +285,7 @@ const i18n = {
     placeholder: 'Posez votre question technique...',
     welcomeTitle: 'Bienvenue dans l\'Assistant OFPPT!',
     welcomeDesc: 'Spécialisé en <strong>Génie Électrique & Génie Énergétique</strong><br>Posez vos questions techniques',
+    systemPrompt: (subject) => `Tu es un formateur expert OFPPT spécialisé en ${subject}. Réponds en français de manière professionnelle et pédagogique. Utilise des formules LaTeX quand nécessaire (avec $...$). Structure tes réponses avec des titres et des listes. Donne des exemples concrets du contexte marocain.`,
     quickBtns: [
       {label:'⚡ Moteur asynchrone', cmd:'Expliquez le principe du moteur asynchrone triphasé avec formules'},
       {label:'☀️ Dimensionnement PV', cmd:'Comment dimensionner une installation solaire PV ?'},
@@ -294,7 +301,9 @@ const i18n = {
       'Résumez les points clés de ce module',
       'Posez-moi des questions de TP sur ce sujet',
       'Résolvez cet exercice pas à pas'
-    ]
+    ],
+    errConn: '⚠️ Erreur de connexion. Veuillez réessayer.',
+    errNet: '⚠️ Problème de connexion. Vérifiez votre accès internet.'
   },
   ar: {
     statusTxt: 'متصل وجاهز',
@@ -305,6 +314,7 @@ const i18n = {
     placeholder: 'اكتب سؤالك التقني...',
     welcomeTitle: 'مرحباً في مساعد OFPPT!',
     welcomeDesc: 'متخصص في <strong>الهندسة الكهربائية والطاقية</strong><br>اسأل أسئلتك التقنية',
+    systemPrompt: (subject) => `أنت مدرب خبير في OFPPT متخصص في ${subject}. أجب بالعربية الفصحى البسيطة بشكل مهني وتعليمي. استخدم صيغ LaTeX عند الضرورة (باستخدام $...$). نظم إجاباتك بعناوين وقوائم. أعط أمثلة تطبيقية من السياق المغربي.`,
     quickBtns: [
       {label:'⚡ المحرك الحثي', cmd:'اشرح مبدأ المحرك الحثي ثلاثي الطور مع المعادلات'},
       {label:'☀️ تصميم PV', cmd:'كيف أحسب نظام الطاقة الشمسية؟'},
@@ -320,7 +330,9 @@ const i18n = {
       'لخص النقاط الأساسية لهذه الوحدة',
       'اسألني أسئلة TP عن هذا الموضوع',
       'حل هذا التمرين خطوة بخطوة'
-    ]
+    ],
+    errConn: '⚠️ خطأ في الاتصال. حاول مجدداً.',
+    errNet: '⚠️ تعذر الاتصال. تحقق من اتصالك بالإنترنت.'
   }
 };
 
@@ -431,15 +443,16 @@ function formatText(text) {
 }
 
 function renderMath() {
-  // Rendu KaTeX si présent
   if (typeof katex !== 'undefined') {
     document.querySelectorAll('.msg-bubble').forEach(el => {
       let html = el.innerHTML;
       html = html.replace(/\$\$([\s\S]+?)\$\$/g, (_, m) => {
-        try { return katex.renderToString(m, {displayMode: true}); } catch(e) { return '$$'+m+'$$'; }
+        try { return katex.renderToString(m, {displayMode: true, throwOnError: false}); } 
+        catch(e) { return '$$'+m+'$$'; }
       });
       html = html.replace(/\$([^\$\n]+?)\$/g, (_, m) => {
-        try { return katex.renderToString(m, {displayMode: false}); } catch(e) { return '$'+m+'$'; }
+        try { return katex.renderToString(m, {displayMode: false, throwOnError: false}); } 
+        catch(e) { return '$'+m+'$'; }
       });
       el.innerHTML = html;
     });
@@ -447,7 +460,44 @@ function renderMath() {
 }
 
 // ============================================
-// ENVOI DE MESSAGE (SIMULATION)
+// APPEL API OPENROUTER
+// ============================================
+async function callOpenRouter(messages) {
+  try {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'HTTP-Referer': window.location.href,
+        'X-Title': 'Assistant OFPPT'
+      },
+      body: JSON.stringify({
+        model: OPENROUTER_MODEL,
+        messages: messages,
+        max_tokens: 2000,
+        temperature: 0.4
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('API Error:', errorData);
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message);
+    
+    return data.choices[0].message.content;
+  } catch (error) {
+    console.error('OpenRouter error:', error);
+    throw error;
+  }
+}
+
+// ============================================
+// ENVOI DE MESSAGE (AVEC API RÉELLE)
 // ============================================
 async function sendMessage() {
   if (isLoading) return;
@@ -456,39 +506,55 @@ async function sendMessage() {
   if (!text) return;
   
   input.value = '';
+  input.style.height = 'auto';
   isLoading = true;
   document.getElementById('sendBtn').disabled = true;
   
   addUserMessage(text);
-  addTyping();
+  const typingIndicator = addTyping();
   
-  // Simulation de réponse (à remplacer par votre API)
-  setTimeout(() => {
+  try {
+    // Construire l'historique des messages
+    const systemMessage = {
+      role: 'system',
+      content: i18n[currentLang].systemPrompt(currentSubject)
+    };
+    
+    const userMessage = {
+      role: 'user',
+      content: text
+    };
+    
+    const messages = [systemMessage, userMessage];
+    
+    // Appeler l'API
+    const reply = await callOpenRouter(messages);
+    
     removeTyping();
-    let response = '';
-    if (currentLang === 'fr') {
-      response = `**Réponse concernant ${currentSubject}:**\n\n`;
-      response += `Voici une explication détaillée de votre question sur **${text}**.\n\n`;
-      response += `### Points clés :\n`;
-      response += `1. Premier point important\n`;
-      response += `2. Deuxième point avec formule $E = mc^2$\n`;
-      response += `3. Troisième point\n\n`;
-      response += `### Exemple calculé :\n`;
-      response += `Si $U = 230V$ et $R = 100\\Omega$, alors $I = U/R = 2.3A$`;
-    } else {
-      response = `**إجابة بخصوص ${currentSubject}:**\n\n`;
-      response += `هذا شرح مفصل لسؤالك عن **${text}**.\n\n`;
-      response += `### النقاط الأساسية :\n`;
-      response += `1. النقطة الأولى المهمة\n`;
-      response += `2. النقطة الثانية مع المعادلة $E = mc^2$\n`;
-      response += `3. النقطة الثالثة\n\n`;
-      response += `### مثال محلول :\n`;
-      response += `إذا كان $U = 230V$ و $R = 100\\Omega$، فإن $I = U/R = 2.3A$`;
+    addBotMessage(reply);
+    
+  } catch (error) {
+    console.error('Erreur:', error);
+    removeTyping();
+    
+    // Message d'erreur en cas d'échec
+    let errorMsg = i18n[currentLang].errNet;
+    if (error.message.includes('HTTP 402')) {
+      errorMsg = currentLang === 'fr' 
+        ? '⚠️ Crédit API insuffisant. Veuillez vérifier votre clé OpenRouter.'
+        : '⚠️ رصيد API غير كاف. يرجى التحقق من مفتاح OpenRouter.';
+    } else if (error.message.includes('HTTP 401')) {
+      errorMsg = currentLang === 'fr'
+        ? '⚠️ Clé API invalide. Veuillez vérifier votre clé OpenRouter.'
+        : '⚠️ مفتاح API غير صالح. يرجى التحقق من مفتاح OpenRouter.';
     }
-    addBotMessage(response);
-    isLoading = false;
-    document.getElementById('sendBtn').disabled = false;
-  }, 1500);
+    
+    addBotMessage(errorMsg);
+  }
+  
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('userInput').focus();
 }
 
 // ============================================
@@ -812,9 +878,18 @@ function showToast(msg) {
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById(`tab-${tab}`)?.classList.add('active');
-  document.getElementById(`panel-${tab}`)?.classList.add('active');
-  if (tab === 'experiences') loadExperiences();
+  
+  if (tab === 'chat') {
+    document.querySelectorAll('.tab-btn')[0].classList.add('active');
+    document.getElementById('panel-chat').classList.add('active');
+  } else if (tab === 'experiences') {
+    document.querySelectorAll('.tab-btn')[1].classList.add('active');
+    document.getElementById('panel-experiences').classList.add('active');
+    loadExperiences();
+  } else if (tab === 'exam') {
+    document.querySelectorAll('.tab-btn')[2].classList.add('active');
+    document.getElementById('panel-exam').classList.add('active');
+  }
 }
 
 // ============================================
@@ -822,7 +897,10 @@ function switchTab(tab) {
 // ============================================
 window.onload = function() {
   renderUI();
-  document.querySelectorAll('.tab-btn')[0].click();
+  // Message de bienvenue avec l'API fonctionnelle
+  addBotMessage(currentLang === 'fr'
+    ? '👋 **Bonjour!** Je suis votre assistant OFPPT spécialisé en Génie Électrique et Énergétique. Posez-moi toutes vos questions techniques!'
+    : '👋 **مرحباً!** أنا مساعد OFPPT المتخصص في الهندسة الكهربائية والطاقية. اسألني أي أسئلة تقنية!');
 };
 </script>
 
