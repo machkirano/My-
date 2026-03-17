@@ -3,15 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>مساعد OFPPT — GE & GEn ⚡</title>
+<title>Assistant OFPPT Ultra — GE & GEn ⚡</title>
+<!-- PWA & SEO -->
 <link rel="manifest" id="pwa-manifest">
 <meta name="theme-color" content="#0d1117">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="مساعد OFPPT">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d1117'/><text y='.9em' font-size='80'>⚡</text></svg>">
+
+<!-- LIBRARIES -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap');
 
 :root {
   --bg:#0b0f1a; --surface:#111827; --surface2:#1a2234;
@@ -23,1048 +32,572 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;max-width:100vw;}
+body{font-family:'Inter', 'Tajawal', sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;overflow:hidden;max-width:100vw;}
 
 /* HEADER */
-.header{background:linear-gradient(135deg,#0b0f1a,#111827);border-bottom:2px solid var(--accent);padding:10px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:200;backdrop-filter:blur(20px);flex-wrap:nowrap;overflow-x:auto;}
-.logo{width:42px;height:42px;background:linear-gradient(135deg,#c9271e,#006233);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 18px rgba(0,208,132,0.2);flex-shrink:0;}
-.header-title{font-size:16px;font-weight:700;color:var(--accent);white-space:nowrap;flex-shrink:0;}
+.header{background:linear-gradient(135deg,#0b0f1a,#111827);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:12px;z-index:200;backdrop-filter:blur(20px);}
+.logo{width:38px;height:38px;background:linear-gradient(135deg,#c9271e,#006233);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 15px rgba(0,208,132,0.15);flex-shrink:0;}
+.header-info h1{font-size:16px;font-weight:700;color:var(--accent);}
+.header-info p{font-size:10px;color:var(--muted);}
 .header-spacer{flex:1;}
-.lang-selector{display:flex;gap:4px;padding:4px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);flex-shrink:0;}
-.lang-btn{padding:6px 12px;background:transparent;border:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;border-radius:6px;}
-.lang-btn.active{background:rgba(0,208,132,0.2);color:var(--accent);}
 
-/* MAIN */
-.main{display:flex;flex:1;overflow:hidden;height:calc(100vh - 70px);max-width:100vw;}
+/* TABS BAR (TOP NAVIGATION) */
+.tabs-bar{display:flex;gap:4px;padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;white-space:nowrap;z-index:150;}
+.tabs-bar::-webkit-scrollbar{display:none;}
+.tab-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.tab-btn:hover{background:var(--surface2);color:var(--text);}
+.tab-btn.active{background:rgba(0,208,132,0.1);border-color:rgba(0,208,132,0.3);color:var(--accent);}
 
-/* SIDEBAR */
-.sidebar{width:230px;min-width:230px;background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;padding:10px 8px;display:flex;flex-direction:column;gap:2px;}
-.sidebar::-webkit-scrollbar{width:3px;}
-.sidebar::-webkit-scrollbar-thumb{background:var(--border);}
-.sidebar-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);padding:8px 8px 5px;border-bottom:1px solid var(--border);margin-bottom:4px;margin-top:6px;}
-.subject-btn{display:flex;align-items:center;gap:9px;width:100%;padding:8px 10px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--text);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s;text-align:left;}
-.subject-btn:hover{background:var(--surface2);border-color:var(--border);}
-.subject-btn.active{background:rgba(0,208,132,0.08);border-color:rgba(0,208,132,0.2);color:var(--accent);}
-.subject-icon{font-size:16px;flex-shrink:0;}
-.subject-name{font-weight:600;font-size:12px;}
-.subject-desc{font-size:10px;color:var(--muted);margin-top:1px;}
+/* MAIN CONTENT */
+.main-container{flex:1;display:flex;overflow:hidden;position:relative;}
+.tab-panel{display:none;flex:1;flex-direction:column;overflow:hidden;width:100%;}
+.tab-panel.active{display:flex;}
 
-/* CHAT */
-.chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth;}
+/* CHAT AREA */
+.chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden;background:rgba(13,17,23,0.5);}
+.messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth;}
 .messages::-webkit-scrollbar{width:4px;}
 .messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
-.welcome-card{background:linear-gradient(135deg,rgba(0,208,132,0.06),rgba(34,211,238,0.04));border:1px solid rgba(0,208,132,0.12);border-radius:16px;padding:24px;text-align:center;animation:fadeInUp 0.5s ease;}
-.big-emoji{font-size:44px;margin-bottom:12px;}
-.welcome-card h2{font-size:18px;font-weight:700;margin-bottom:8px;color:var(--accent);}
-.welcome-card p{color:var(--muted);font-size:13px;line-height:1.8;}
-.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;}
-.quick-btn{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 11px;font-size:11.5px;color:var(--text);cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;line-height:1.4;text-align:center;}
-.quick-btn:hover{border-color:var(--accent);color:var(--accent);}
+.msg{display:flex;gap:12px;animation:fadeInUp 0.3s ease;align-items:flex-end;max-width:90%;}
+.msg.user{flex-direction:row-reverse;align-self:flex-end;}
+.msg.bot{align-self:flex-start;}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-.msg{display:flex;gap:9px;animation:fadeInUp 0.3s ease;align-items:flex-end;}
-.msg.user{flex-direction:row-reverse;}
-@keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.avatar{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.avatar{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
 .msg.user .avatar{background:linear-gradient(135deg,#c9271e,#006233);}
 .msg.bot  .avatar{background:linear-gradient(135deg,#1a3a2a,#0a2535);border:1px solid var(--accent);}
-.msg-bubble{max-width:80%;padding:14px 17px;border-radius:16px;font-size:14px;line-height:1.6;word-wrap:break-word;overflow-wrap:break-word;}
-.msg.user .msg-bubble{background:linear-gradient(135deg,rgba(0,208,132,0.12),rgba(34,211,238,0.08));border:2px solid rgba(0,208,132,0.3);border-radius:16px;}
-.msg.bot  .msg-bubble{background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
+
+.msg-bubble{padding:14px 18px;border-radius:18px;font-size:14px;line-height:1.7;word-wrap:break-word;overflow-wrap:break-word;position:relative;}
+.msg.user .msg-bubble{background:linear-gradient(135deg,rgba(0,208,132,0.15),rgba(34,211,238,0.1));border:1.5px solid rgba(0,208,132,0.3);border-bottom-right-radius:4px;color:var(--text);}
+.msg.bot  .msg-bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px;box-shadow:0 4px 15px rgba(0,0,0,0.25);}
+
+/* CONTENT STYLING */
 .msg-bubble strong{color:var(--accent);font-weight:700;}
-.msg-bubble em{color:var(--accent3);font-style:normal;font-weight:600;}
-
-/* SECTION STYLING */
-.section-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--accent);margin:14px 0 6px;padding-bottom:5px;border-bottom:1px solid rgba(0,208,132,0.2);}
-.step{display:flex;gap:10px;align-items:flex-start;background:rgba(0,208,132,0.04);border-right:3px solid var(--accent);padding:8px 12px;margin:6px 0;border-radius:0 10px 10px 0;font-size:13.5px;line-height:1.8;}
-.step-num{background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#000;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:3px;}
-
-.info-box{background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.2);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:13px;}
-.info-box .box-title{color:var(--accent2);font-weight:700;font-size:12px;margin-bottom:4px;display:flex;align-items:center;gap:5px;}
-.warn-box{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.25);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:13px;}
-.warn-box .box-title{color:var(--accent3);font-weight:700;font-size:12px;margin-bottom:4px;display:flex;align-items:center;gap:5px;}
-
-.math-block{background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.15);border-radius:10px;padding:12px 16px;margin:10px 0;text-align:center;overflow-x:auto;font-family:'Fira Code',monospace;color:var(--accent2);}
-.msg-bubble code{background:rgba(0,208,132,0.1);padding:2px 7px;border-radius:5px;font-size:12px;color:var(--accent);font-family:'Fira Code',monospace;}
-.definition{background:rgba(167,139,250,0.06);border-right:3px solid var(--purple);border-radius:0 10px 10px 0;padding:8px 14px;margin:8px 0;font-size:13px;line-height:1.8;}
-.example{background:rgba(244,114,182,0.05);border:1px dashed rgba(244,114,182,0.25);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:13px;}
-.example-title{color:var(--pink);font-weight:700;font-size:12px;margin-bottom:5px;}
-
-/* VALIDATION ENGINE */
-.validation-box{background:rgba(0,208,132,0.06);border:1px solid rgba(0,208,132,0.2);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13px;}
-.validation-input{width:100%;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Fira Code',monospace;font-size:13px;margin:8px 0;}
-.validation-input:focus{outline:none;border-color:var(--accent);}
-.validation-btn{padding:6px 14px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:6px;color:#000;font-weight:600;cursor:pointer;font-size:12px;margin-top:8px;}
-.validation-result{margin-top:8px;padding:8px 12px;border-radius:6px;font-weight:600;}
-.validation-result.correct{background:rgba(34,211,238,0.1);color:var(--success);}
-.validation-result.incorrect{background:rgba(248,81,73,0.1);color:var(--danger);}
-
-/* CIRCUIT SIMULATOR */
-.circuit-container{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;margin:10px 0;}
-.circuit-canvas{width:100%;height:300px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;}
-.circuit-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;}
-.control-group{display:flex;flex-direction:column;gap:4px;}
-.control-label{color:var(--muted);font-weight:600;}
-.control-input{padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Fira Code',monospace;}
-.circuit-results{background:rgba(0,208,132,0.04);border:1px solid rgba(0,208,132,0.2);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:12px;font-family:'Fira Code',monospace;color:var(--accent);}
-
-/* GAMIFICATION */
-.level-badge{display:inline-block;padding:4px 12px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border-radius:20px;color:#000;font-weight:700;font-size:11px;margin:4px 0;}
-.score-display{background:rgba(0,208,132,0.06);border:1px solid rgba(0,208,132,0.2);border-radius:10px;padding:12px;margin:10px 0;text-align:center;}
-.score-number{font-size:28px;font-weight:900;color:var(--accent);font-family:'Fira Code',monospace;}
-.score-label{font-size:12px;color:var(--muted);margin-top:4px;}
-
-/* FOCUS MODE */
-.focus-mode .sidebar{display:none;}
-.focus-mode .quick-actions{display:none;}
-
-/* MODAL */
-.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
-.modal.open{display:flex;}
-.modal-content{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:12px;}
-.modal-header h2{font-size:18px;font-weight:700;color:var(--accent);}
-.modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;transition:color 0.2s;}
-.modal-close:hover{color:var(--text);}
+.section-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--accent);margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid rgba(0,208,132,0.2);}
+.step{display:flex;gap:12px;align-items:flex-start;background:rgba(0,208,132,0.04);border-left:3px solid var(--accent);padding:10px 14px;margin:8px 0;border-radius:4px 12px 12px 4px;}
+.step-num{background:var(--accent);color:#000;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;margin-top:2px;}
+.math-display{background:rgba(34,211,238,0.05);border:1px solid rgba(34,211,238,0.15);border-radius:12px;padding:14px;margin:12px 0;text-align:center;overflow-x:auto;}
 
 /* INPUT AREA */
-.input-area{padding:10px 14px 12px;border-top:1px solid var(--border);background:rgba(13,17,23,0.9);flex-shrink:0;}
-.input-wrapper{display:flex;align-items:flex-end;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:9px 13px;transition:border-color 0.2s;}
-.input-wrapper:focus-within{border-color:rgba(0,208,132,0.4);}
-.input-wrapper textarea{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;resize:none;max-height:90px;line-height:1.5;}
-.input-wrapper textarea::placeholder{color:var(--muted);}
-.send-btn{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;color:#000;font-size:16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;}
-.send-btn:hover{transform:scale(1.08);box-shadow:0 4px 14px rgba(0,208,132,0.4);}
-.send-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+.input-area{padding:12px 16px 16px;background:var(--bg);border-top:1px solid var(--border);}
+.input-wrapper{display:flex;align-items:flex-end;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 14px;transition:all 0.2s;}
+.input-wrapper:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,208,132,0.1);}
+.input-wrapper textarea{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:inherit;font-size:14px;resize:none;max-height:120px;line-height:1.5;}
+.send-btn{width:38px;height:38px;border-radius:10px;background:var(--accent);border:none;color:#000;font-size:18px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.send-btn:hover{transform:scale(1.05);background:var(--accent-dark);}
 
-/* TOOLBAR */
-.toolbar{display:flex;gap:6px;padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap;justify-content:flex-start;overflow-x:auto;}
-.toolbar-btn{padding:6px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;white-space:nowrap;}
-.toolbar-btn:hover{border-color:var(--accent);color:var(--accent);}
-.toolbar-btn.active{background:rgba(0,208,132,0.1);border-color:var(--accent);color:var(--accent);}
+/* VIDEO LIBRARY */
+.vlib-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:16px;padding:20px;overflow-y:auto;flex:1;}
+.vcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all 0.3s;}
+.vcard:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 8px 25px rgba(0,0,0,0.4);}
+.vcard-thumb{width:100%;aspect-ratio:16/9;background:#000;position:relative;}
+.vcard-thumb img{width:100%;height:100%;object-fit:cover;}
+.vcard-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.2);}
+.vcard-play-btn{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.9);color:#000;display:flex;align-items:center;justify-content:center;font-size:20px;padding-left:4px;}
+.vcard-info{padding:14px;}
+.vcard-tag{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:6px;display:block;}
+.vcard-title{font-size:14px;font-weight:600;color:var(--text);line-height:1.4;}
 
-/* TOAST */
-.toast{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-size:13px;z-index:1000;animation:slideIn 0.3s ease;box-shadow:0 4px 16px rgba(0,0,0,0.3);}
-@keyframes slideIn{from{transform:translateX(400px);opacity:0}to{transform:translateX(0);opacity:1}}
+/* SIMULATOR */
+.sim-container{display:flex;flex:1;overflow:hidden;padding:20px;gap:20px;}
+.sim-canvas-area{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:16px;position:relative;display:flex;align-items:center;justify-content:center;}
+.sim-controls{width:300px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:20px;}
+.sim-param{display:flex;flex-direction:column;gap:8px;}
+.sim-label{font-size:12px;font-weight:700;color:var(--muted);display:flex;justify-content:space-between;}
+.sim-label span{color:var(--accent);}
+.sim-slider{width:100%;accent-color:var(--accent);cursor:pointer;}
+.sim-stats{background:var(--surface2);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.stat-item{display:flex;justify-content:space-between;font-size:13px;}
+.stat-val{font-family:'Fira Code', monospace;color:var(--accent2);font-weight:700;}
 
-/* OFFLINE INDICATOR */
-.offline-banner{display:none;background:var(--danger);color:#fff;padding:8px 12px;text-align:center;font-size:12px;font-weight:600;}
-.offline-banner.show{display:block;}
+/* MODALS */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:20px;}
+.modal.open{display:flex;}
+.modal-content{background:var(--surface);border:1px solid var(--border);border-radius:20px;width:100%;max-width:800px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 25px 50px rgba(0,0,0,0.5);}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-close{background:var(--surface2);border:none;color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;}
 
-/* RESPONSIVE */
+/* UTILS */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);padding:12px 24px;border-radius:12px;font-size:13px;z-index:2000;box-shadow:0 10px 30px rgba(0,0,0,0.4);animation:toastIn 0.3s ease;display:none;}
+@keyframes toastIn{from{transform:translate(-50%, 20px);opacity:0}to{transform:translate(-50%, 0);opacity:1}}
+
+/* MOBILE */
 @media(max-width:768px){
-  .sidebar{width:60px;min-width:60px;}
-  .subject-name,.subject-desc{display:none;}
-  .msg-bubble{max-width:95%;}
-  .modal-content{max-width:95%;}
+  .sim-container{flex-direction:column;}
+  .sim-controls{width:100%;}
+  .msg{max-width:95%;}
 }
 </style>
 </head>
 <body>
 
-<!-- OFFLINE BANNER -->
-<div class="offline-banner" id="offline-banner">🔴 Mode hors ligne — Certaines fonctionnalités sont limitées</div>
-
 <!-- HEADER -->
 <div class="header">
   <div class="logo">⚡</div>
-  <div class="header-title" id="header-title">مساعد OFPPT</div>
-  <div class="header-spacer"></div>
-  <div class="lang-selector">
-    <button class="lang-btn active" onclick="switchLanguage('fr')">FR</button>
-    <button class="lang-btn" onclick="switchLanguage('ar')">AR</button>
+  <div class="header-info">
+    <h1 id="txt-app-title">Assistant OFPPT Ultra</h1>
+    <p id="txt-app-sub">GE & GEn • Plateforme Intelligente</p>
   </div>
+  <div class="header-spacer"></div>
+  <div class="lang-selector" style="display:flex; gap:8px;">
+    <button class="tab-btn active" id="btn-lang-fr" onclick="setLang('fr')">FR</button>
+    <button class="tab-btn" id="btn-lang-ar" onclick="setLang('ar')">AR</button>
+  </div>
+</div>
+
+<!-- TOP TABS NAVIGATION -->
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="switchTab('chat', this)">💬 <span id="txt-tab-chat">Chat IA</span></button>
+  <button class="tab-btn" onclick="switchTab('simulator', this)">🔧 <span id="txt-tab-sim">Simulateur</span></button>
+  <button class="tab-btn" onclick="switchTab('videos', this)">🎥 <span id="txt-tab-videos">Vidéos & Cours</span></button>
+  <button class="tab-btn" onclick="switchTab('exercises', this)">✏️ <span id="txt-tab-ex">Exercices</span></button>
+  <button class="tab-btn" onclick="switchTab('scanner', this)">📷 <span id="txt-tab-ocr">Scanner OCR</span></button>
 </div>
 
 <!-- MAIN CONTENT -->
-<div class="main">
-  <!-- SIDEBAR -->
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-title" id="sidebar-title-subjects">Matières</div>
-    <button class="subject-btn active" onclick="selectSubject('general', this)">
-      <span class="subject-icon">⚡</span>
-      <div>
-        <div class="subject-name" id="subject-general-name">Général OFPPT</div>
-        <div class="subject-desc" id="subject-general-desc">Tous les sujets</div>
+<div class="main-container">
+  
+  <!-- TAB: CHAT -->
+  <div class="tab-panel active" id="panel-chat">
+    <div class="chat-area">
+      <div class="messages" id="chat-messages">
+        <!-- Welcome Card -->
+        <div class="welcome-card" style="text-align:center; padding:40px 20px;">
+          <div class="big-emoji" style="font-size:50px; margin-bottom:15px;">🚀</div>
+          <h2 id="txt-welcome-title" style="color:var(--accent); margin-bottom:10px;">Bienvenue sur l'Assistant OFPPT</h2>
+          <p id="txt-welcome-desc" style="color:var(--muted); max-width:500px; margin:0 auto 20px;">Posez vos questions techniques sur le Génie Électrique ou Énergétique. Je réponds avec des schémas, des formules LaTeX et des explications détaillées.</p>
+          <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button class="tab-btn" onclick="sendQuick('Loi d\'Ohm')">Loi d'Ohm</button>
+            <button class="tab-btn" onclick="sendQuick('Moteur Asynchrone')">Moteur Asynchrone</button>
+            <button class="tab-btn" onclick="sendQuick('Circuit RC')">Circuit RC</button>
+          </div>
+        </div>
       </div>
-    </button>
-    <button class="subject-btn" onclick="selectSubject('ge', this)">
-      <span class="subject-icon">🔌</span>
-      <div>
-        <div class="subject-name" id="subject-ge-name">Génie Électrique</div>
-        <div class="subject-desc" id="subject-ge-desc">GE</div>
-      </div>
-    </button>
-    <button class="subject-btn" onclick="selectSubject('gen', this)">
-      <span class="subject-icon">⚙️</span>
-      <div>
-        <div class="subject-name" id="subject-gen-name">Génie Énergétique</div>
-        <div class="subject-desc" id="subject-gen-desc">GEn</div>
-      </div>
-    </button>
-    <button class="subject-btn" onclick="selectSubject('automation', this)">
-      <span class="subject-icon">🤖</span>
-      <div>
-        <div class="subject-name" id="subject-automation-name">Automatisation</div>
-        <div class="subject-desc" id="subject-automation-desc">Automates</div>
-      </div>
-    </button>
-
-    <div class="sidebar-title" id="sidebar-title-tools">Outils</div>
-    <button class="subject-btn" onclick="openSimulator()">
-      <span class="subject-icon">🔧</span>
-      <div>
-        <div class="subject-name" id="tool-simulator">Simulateur</div>
-        <div class="subject-desc" id="tool-simulator-desc">Circuits</div>
-      </div>
-    </button>
-    <button class="subject-btn" onclick="openExercises()">
-      <span class="subject-icon">✏️</span>
-      <div>
-        <div class="subject-name" id="tool-exercises">Exercices</div>
-        <div class="subject-desc" id="tool-exercises-desc">Interactifs</div>
-      </div>
-    </button>
-    <button class="subject-btn" onclick="toggleFocusMode()">
-      <span class="subject-icon">🎯</span>
-      <div>
-        <div class="subject-name" id="tool-focus">Mode Focus</div>
-        <div class="subject-desc" id="tool-focus-desc">Concentration</div>
-      </div>
-    </button>
-
-    <div class="sidebar-title" id="sidebar-title-gamification">Gamification</div>
-    <div style="padding:8px 10px;font-size:12px;">
-      <div id="level-display" style="margin-bottom:8px;"></div>
-      <div id="score-display" style="font-size:11px;color:var(--muted);">
-        <span id="score-label">Points:</span> <span id="score-value">0</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- CHAT AREA -->
-  <div class="chat-area">
-    <div class="toolbar">
-      <button class="toolbar-btn" onclick="startVoiceSearch()" title="Recherche vocale" id="btn-voice">🎤 Voix</button>
-      <button class="toolbar-btn" onclick="openScanner()" title="Scanner OCR" id="btn-scanner">📷 Scanner</button>
-      <button class="toolbar-btn" onclick="exportPDF()" title="Exporter en PDF" id="btn-export">📥 Exporter</button>
-      <button class="toolbar-btn" onclick="startChallenge()" title="Défi 60 secondes" id="btn-challenge">⚡ Défi 60s</button>
-    </div>
-
-    <div class="messages" id="messages">
-      <div class="welcome-card">
-        <div class="big-emoji">⚡</div>
-        <h2 id="welcome-title">Bienvenue sur Assistant OFPPT</h2>
-        <p id="welcome-desc">Votre plateforme d'apprentissage intelligente pour les filières techniques. Posez vos questions, explorez les simulateurs et testez vos connaissances.</p>
-        <div class="quick-actions">
-          <button class="quick-btn" onclick="sendQuickMessage('Explique-moi les circuits RC')" id="quick1">Circuits RC</button>
-          <button class="quick-btn" onclick="sendQuickMessage('Qu\'est-ce qu\'un moteur asynchrone?')" id="quick2">Moteur asynchrone</button>
-          <button class="quick-btn" onclick="sendQuickMessage('Aide-moi avec les transformateurs')" id="quick3">Transformateurs</button>
-          <button class="quick-btn" onclick="sendQuickMessage('Défi rapide')" id="quick4">Défi rapide</button>
+      <div class="input-area">
+        <div class="input-wrapper">
+          <textarea id="chat-input" placeholder="Posez votre question technique..." rows="1" oninput="autoResize(this)"></textarea>
+          <button class="send-btn" onclick="handleSend()">➤</button>
         </div>
       </div>
     </div>
-
-    <div class="input-area">
-      <div class="input-wrapper">
-        <textarea id="message-input" placeholder="Posez votre question..." rows="1"></textarea>
-        <button class="send-btn" onclick="sendMessage()">➤</button>
-      </div>
-    </div>
   </div>
-</div>
 
-<!-- MODALS -->
-
-<!-- SCANNER MODAL -->
-<div class="modal" id="scannerModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 id="scanner-title">📷 Scanner OCR</h2>
-      <button class="modal-close" onclick="closeScanner()">✕</button>
-    </div>
-    <div id="scanner-step1">
-      <p style="margin-bottom:12px;color:var(--muted);" id="scanner-desc">Téléchargez une image d'un exercice ou d'un problème:</p>
-      <input type="file" id="scanner-file-input" accept="image/*" onchange="loadScannerImage(event)">
-      <p style="margin:12px 0;color:var(--muted);font-size:12px;" id="scanner-camera-label">Ou utilisez votre caméra:</p>
-      <input type="file" id="scanner-camera-input" accept="image/*" capture="environment" onchange="loadScannerImage(event)">
-    </div>
-    <div id="scanner-step2" style="display:none;">
-      <canvas id="scanner-canvas" style="width:100%;border:1px solid var(--border);border-radius:8px;margin-bottom:12px;"></canvas>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="toolbar-btn" onclick="analyzeScanner('solve')" id="btn-solve">⚡ Résoudre</button>
-        <button class="toolbar-btn" onclick="analyzeScanner('schema')" id="btn-schema">📐 Analyser schéma</button>
-        <button class="toolbar-btn" onclick="analyzeScanner('chart')" id="btn-chart">📊 Analyser graphique</button>
-        <button class="toolbar-btn" onclick="analyzeScanner('summarize')" id="btn-summarize">📝 Résumer</button>
-        <button class="toolbar-btn" onclick="resetScanner()" id="btn-reset">🔄 Réinitialiser</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SIMULATOR MODAL -->
-<div class="modal" id="simulatorModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 id="simulator-title">🔧 Simulateur de Circuits</h2>
-      <button class="modal-close" onclick="closeSimulator()">✕</button>
-    </div>
-    <div class="circuit-container">
-      <canvas id="circuit-canvas" class="circuit-canvas"></canvas>
-      <div class="circuit-controls">
-        <div class="control-group">
-          <label class="control-label" id="voltage-label">Tension (V)</label>
-          <input type="range" id="voltage-slider" min="0" max="230" value="12" class="control-input" oninput="updateCircuit()">
-          <span id="voltage-display">12 V</span>
-        </div>
-        <div class="control-group">
-          <label class="control-label" id="resistance-label">Résistance (Ω)</label>
-          <input type="range" id="resistance-slider" min="1" max="1000" value="100" class="control-input" oninput="updateCircuit()">
-          <span id="resistance-display">100 Ω</span>
+  <!-- TAB: SIMULATOR -->
+  <div class="tab-panel" id="panel-simulator">
+    <div class="sim-container">
+      <div class="sim-canvas-area">
+        <canvas id="sim-canvas" style="width:100%; height:100%;"></canvas>
+        <div style="position:absolute; top:20px; left:20px; background:rgba(0,0,0,0.6); padding:10px; border-radius:8px; font-size:12px; color:var(--accent);">
+          <span id="txt-sim-live">⚡ Visualisation en temps réel</span>
         </div>
       </div>
-      <div class="circuit-results">
-        <div id="current-label">Courant (I):</div> <span id="current-display">0.12</span> A
-        <div id="power-label" style="margin-top:6px;">Puissance (P):</div> <span id="power-display">1.44</span> W
-        <div id="resistance-result-label" style="margin-top:6px;">Résistance (R):</div> <span id="resistance-result">100</span> Ω
+      <div class="sim-controls">
+        <h3 id="txt-sim-params">Paramètres du Circuit</h3>
+        <div class="sim-param">
+          <div class="sim-label"><span id="txt-sim-u">Tension (U)</span> <span id="val-u">12 V</span></div>
+          <input type="range" class="sim-slider" id="slider-u" min="0" max="230" value="12" oninput="updateSim()">
+        </div>
+        <div class="sim-param">
+          <div class="sim-label"><span id="txt-sim-r">Résistance (R)</span> <span id="val-r">100 Ω</span></div>
+          <input type="range" class="sim-slider" id="slider-r" min="1" max="1000" value="100" oninput="updateSim()">
+        </div>
+        <div class="sim-stats">
+          <div class="stat-item"><span id="txt-sim-i">Intensité (I)</span> <span class="stat-val" id="val-i">0.12 A</span></div>
+          <div class="stat-item"><span id="txt-sim-p">Puissance (P)</span> <span class="stat-val" id="val-p">1.44 W</span></div>
+        </div>
+        <button class="tab-btn active" style="width:100%; justify-content:center;" onclick="addSimScore()">✅ Valider l'expérience (+20 pts)</button>
       </div>
     </div>
   </div>
+
+  <!-- TAB: VIDEOS -->
+  <div class="tab-panel" id="panel-videos">
+    <div class="vlib-grid" id="video-grid">
+      <!-- Videos will be injected here -->
+    </div>
+  </div>
+
+  <!-- TAB: EXERCISES -->
+  <div class="tab-panel" id="panel-exercises" style="overflow-y:auto; padding:20px;">
+    <div id="exercise-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(350px, 1fr)); gap:20px;">
+      <!-- Exercises will be injected here -->
+    </div>
+  </div>
+
+  <!-- TAB: SCANNER -->
+  <div class="tab-panel" id="panel-scanner" style="align-items:center; justify-content:center; padding:40px;">
+    <div style="background:var(--surface); border:2px dashed var(--border); border-radius:20px; padding:40px; text-align:center; max-width:500px; width:100%;">
+      <div style="font-size:60px; margin-bottom:20px;">📷</div>
+      <h3 id="txt-ocr-title" style="margin-bottom:10px;">Scanner d'Exercices</h3>
+      <p id="txt-ocr-desc" style="color:var(--muted); margin-bottom:30px;">Prenez une photo de votre exercice papier ou d'un schéma pour obtenir une solution détaillée.</p>
+      <input type="file" id="ocr-upload" accept="image/*" style="display:none;" onchange="handleOCR(this)">
+      <button class="tab-btn active" style="width:100%; padding:15px; justify-content:center;" onclick="document.getElementById('ocr-upload').click()">Sélectionner une image</button>
+    </div>
+  </div>
+
 </div>
 
-<!-- EXERCISES MODAL -->
-<div class="modal" id="exercisesModal">
+<!-- VIDEO MODAL -->
+<div class="modal" id="video-modal">
   <div class="modal-content">
     <div class="modal-header">
-      <h2 id="exercises-title">✏️ Exercices Interactifs</h2>
-      <button class="modal-close" onclick="closeExercises()">✕</button>
+      <h2 id="modal-video-title">Titre de la vidéo</h2>
+      <button class="modal-close" onclick="closeVideo()">✕</button>
     </div>
-    <div id="exercises-content">
-      <div class="validation-box">
-        <h3 style="margin-bottom:8px;" id="ex1-title">Exercice 1: Calcul de courant</h3>
-        <p style="font-size:12px;margin-bottom:8px;" id="ex1-desc">Avec V = 24V et R = 8Ω, calculez I:</p>
-        <input type="number" class="validation-input" id="ex1-input" placeholder="Réponse (A)">
-        <button class="validation-btn" onclick="validateExercise(1, 3)" id="ex1-btn">Vérifier</button>
-        <div id="ex1-result"></div>
-      </div>
-      <div class="validation-box">
-        <h3 style="margin-bottom:8px;" id="ex2-title">Exercice 2: Puissance électrique</h3>
-        <p style="font-size:12px;margin-bottom:8px;" id="ex2-desc">Avec V = 230V et I = 5A, calculez P:</p>
-        <input type="number" class="validation-input" id="ex2-input" placeholder="Réponse (W)">
-        <button class="validation-btn" onclick="validateExercise(2, 1150)" id="ex2-btn">Vérifier</button>
-        <div id="ex2-result"></div>
-      </div>
-      <div class="validation-box">
-        <h3 style="margin-bottom:8px;" id="ex3-title">Exercice 3: Résistance équivalente</h3>
-        <p style="font-size:12px;margin-bottom:8px;" id="ex3-desc">Deux résistances en série: R1=10Ω, R2=15Ω. Calculez Req:</p>
-        <input type="number" class="validation-input" id="ex3-input" placeholder="Réponse (Ω)">
-        <button class="validation-btn" onclick="validateExercise(3, 25)" id="ex3-btn">Vérifier</button>
-        <div id="ex3-result"></div>
-      </div>
+    <div style="aspect-ratio:16/9; background:#000;">
+      <iframe id="video-iframe" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
     </div>
+    <div style="padding:20px;" id="modal-video-desc">Description...</div>
   </div>
 </div>
 
-<!-- CHALLENGE MODAL -->
-<div class="modal" id="challengeModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 id="challenge-title">⚡ Défi 60 Secondes</h2>
-      <button class="modal-close" onclick="closeChallenge()">✕</button>
-    </div>
-    <div style="text-align:center;">
-      <div id="challenge-timer" style="font-size:48px;font-weight:900;color:var(--accent);font-family:'Fira Code',monospace;margin:20px 0;">60</div>
-      <div id="challenge-content"></div>
-    </div>
-  </div>
-</div>
+<div class="toast" id="toast">Message...</div>
 
-<!-- SCRIPT -->
 <script>
 // ═══════════════════════════════════════════════════════════
-// CONFIGURATION & STATE
+// CONFIGURATION & DATA
 // ═══════════════════════════════════════════════════════════
 
-const STORAGE_META = 'ofppt_meta';
-const STORAGE_SCORES = 'ofppt_scores';
-const STORAGE_CACHE = 'ofppt_cache';
-
-let currentLanguage = 'fr';
-let currentSubject = 'general';
-let focusMode = false;
-let isOnline = navigator.onLine;
-let userScore = parseInt(localStorage.getItem(STORAGE_SCORES) || '0');
-let userLevel = calculateLevel(userScore);
+let currentLang = 'fr';
+let userScore = parseInt(localStorage.getItem('ofppt_score') || '0');
 
 const translations = {
   fr: {
-    welcome: 'Bienvenue sur Assistant OFPPT',
-    welcome_desc: 'Votre plateforme d\'apprentissage intelligente pour les filières techniques. Posez vos questions, explorez les simulateurs et testez vos connaissances.',
-    general: 'Général OFPPT',
-    general_desc: 'Tous les sujets',
-    ge: 'Génie Électrique',
-    ge_desc: 'GE',
-    gen: 'Génie Énergétique',
-    gen_desc: 'GEn',
-    automation: 'Automatisation',
-    automation_desc: 'Automates',
-    subjects: 'Matières',
-    tools: 'Outils',
-    gamification: 'Gamification',
-    simulator: 'Simulateur',
-    simulator_desc: 'Circuits',
-    exercises: 'Exercices',
-    exercises_desc: 'Interactifs',
-    focus: 'Mode Focus',
-    focus_desc: 'Concentration',
-    scanner_title: '📷 Scanner OCR',
-    scanner_desc: 'Téléchargez une image d\'un exercice ou d\'un problème:',
-    scanner_camera: 'Ou utilisez votre caméra:',
-    solve: '⚡ Résoudre',
-    schema: '📐 Analyser schéma',
-    chart: '📊 Analyser graphique',
-    summarize: '📝 Résumer',
-    reset: '🔄 Réinitialiser',
-    simulator_title: '🔧 Simulateur de Circuits',
-    voltage: 'Tension (V)',
-    resistance: 'Résistance (Ω)',
-    current: 'Courant (I):',
-    power: 'Puissance (P):',
-    resistance_result: 'Résistance (R):',
-    exercises_title: '✏️ Exercices Interactifs',
-    ex1_title: 'Exercice 1: Calcul de courant',
-    ex1_desc: 'Avec V = 24V et R = 8Ω, calculez I:',
-    ex2_title: 'Exercice 2: Puissance électrique',
-    ex2_desc: 'Avec V = 230V et I = 5A, calculez P:',
-    ex3_title: 'Exercice 3: Résistance équivalente',
-    ex3_desc: 'Deux résistances en série: R1=10Ω, R2=15Ω. Calculez Req:',
-    verify: 'Vérifier',
-    challenge_title: '⚡ Défi 60 Secondes',
-    correct: '✅ Correct!',
-    incorrect: '❌ Incorrect. Réessayez!',
-    offline: '🔴 Mode hors ligne',
-    online: '🟢 En ligne',
-    debutant: 'Débutant',
-    technicien: 'Technicien',
-    specialiste: 'Technicien Spécialisé',
-    expert: 'Expert',
-    points: 'Points:',
-    voice: '🎤 Voix',
-    scanner: '📷 Scanner',
-    export: '📥 Exporter',
-    challenge: '⚡ Défi 60s'
+    appTitle: "Assistant OFPPT Ultra",
+    appSub: "GE & GEn • Plateforme Intelligente",
+    tabChat: "Chat IA",
+    tabSim: "Simulateur",
+    tabVideos: "Vidéos & Cours",
+    tabEx: "Exercices",
+    tabOcr: "Scanner OCR",
+    welcomeTitle: "Bienvenue sur l'Assistant OFPPT",
+    welcomeDesc: "Posez vos questions techniques sur le Génie Électrique ou Énergétique. Je réponds avec des schémas, des formules LaTeX et des explications détaillées.",
+    simParams: "Paramètres du Circuit",
+    simU: "Tension (U)",
+    simR: "Résistance (R)",
+    simI: "Intensité (I)",
+    simP: "Puissance (P)",
+    simLive: "⚡ Visualisation en temps réel",
+    ocrTitle: "Scanner d'Exercices",
+    ocrDesc: "Prenez une photo de votre exercice papier ou d'un schéma pour obtenir une solution détaillée.",
+    correct: "✅ Correct !",
+    incorrect: "❌ Incorrect, réessayez.",
+    scoreAdded: "Points ajoutés ! Score total: "
   },
   ar: {
-    welcome: 'مرحباً بك في مساعد OFPPT',
-    welcome_desc: 'منصة التعلم الذكية الخاصة بك للتخصصات التقنية. اطرح أسئلتك واستكشف المحاكيات واختبر معلوماتك.',
-    general: 'عام OFPPT',
-    general_desc: 'جميع المواضيع',
-    ge: 'الهندسة الكهربائية',
-    ge_desc: 'GE',
-    gen: 'هندسة الطاقة',
-    gen_desc: 'GEn',
-    automation: 'الأتمتة',
-    automation_desc: 'الأوتوماتا',
-    subjects: 'المواد',
-    tools: 'الأدوات',
-    gamification: 'المكافآت',
-    simulator: 'محاكي',
-    simulator_desc: 'الدوائر',
-    exercises: 'تمارين',
-    exercises_desc: 'تفاعلية',
-    focus: 'وضع التركيز',
-    focus_desc: 'التركيز',
-    scanner_title: '📷 ماسح OCR',
-    scanner_desc: 'قم بتحميل صورة لتمرين أو مشكلة:',
-    scanner_camera: 'أو استخدم الكاميرا:',
-    solve: '⚡ حل',
-    schema: '📐 تحليل الرسم',
-    chart: '📊 تحليل الرسم البياني',
-    summarize: '📝 ملخص',
-    reset: '🔄 إعادة تعيين',
-    simulator_title: '🔧 محاكي الدوائر',
-    voltage: 'الجهد (V)',
-    resistance: 'المقاومة (Ω)',
-    current: 'التيار (I):',
-    power: 'الطاقة (P):',
-    resistance_result: 'المقاومة (R):',
-    exercises_title: '✏️ تمارين تفاعلية',
-    ex1_title: 'التمرين 1: حساب التيار',
-    ex1_desc: 'مع V = 24V و R = 8Ω، احسب I:',
-    ex2_title: 'التمرين 2: الطاقة الكهربائية',
-    ex2_desc: 'مع V = 230V و I = 5A، احسب P:',
-    ex3_title: 'التمرين 3: المقاومة المكافئة',
-    ex3_desc: 'مقاومتان في سلسلة: R1=10Ω, R2=15Ω. احسب Req:',
-    verify: 'تحقق',
-    challenge_title: '⚡ تحدي 60 ثانية',
-    correct: '✅ صحيح!',
-    incorrect: '❌ خطأ. حاول مرة أخرى!',
-    offline: '🔴 وضع بدون اتصال',
-    online: '🟢 متصل',
-    debutant: 'مبتدئ',
-    technicien: 'تقني',
-    specialiste: 'تقني متخصص',
-    expert: 'خبير',
-    points: 'النقاط:',
-    voice: '🎤 صوت',
-    scanner: '📷 ماسح',
-    export: '📥 تصدير',
-    challenge: '⚡ تحدي 60ث'
+    appTitle: "مساعد OFPPT الفائق",
+    appSub: "GE & GEn • منصة ذكية",
+    tabChat: "محادثة ذكية",
+    tabSim: "المحاكي",
+    tabVideos: "فيديوهات ودروس",
+    tabEx: "تمارين",
+    tabOcr: "ماسح OCR",
+    welcomeTitle: "مرحباً بك في مساعد OFPPT",
+    welcomeDesc: "اطرح أسئلتك التقنية حول الهندسة الكهربائية أو هندسة الطاقة. سأجيبك بالمخططات وصيغ LaTeX وشروحات مفصلة.",
+    simParams: "بارامترات الدارة",
+    simU: "الجهد (U)",
+    simR: "المقاومة (R)",
+    simI: "التيار (I)",
+    simP: "القدرة (P)",
+    simLive: "⚡ محاكاة مباشرة",
+    ocrTitle: "ماسح التمارين",
+    ocrDesc: "التقط صورة لتمرينك الورقي أو لمخطط للحصول على حل مفصل.",
+    correct: "✅ صحيح !",
+    incorrect: "❌ خطأ، حاول مرة أخرى.",
+    scoreAdded: "تمت إضافة النقاط! المجموع: "
   }
 };
 
+const videoData = [
+  { id: "v1", title: "Moteur Asynchrone Triphasé", tag: "GE", thumb: "https://img.youtube.com/vi/AQqyG7raVAY/maxresdefault.jpg", url: "https://www.youtube.com/embed/AQqyG7raVAY", desc: "Comprendre le fonctionnement du champ magnétique tournant et du glissement." },
+  { id: "v2", title: "Installation Photovoltaïque", tag: "GEn", thumb: "https://img.youtube.com/vi/09p6UqSjWio/maxresdefault.jpg", url: "https://www.youtube.com/embed/09p6UqSjWio", desc: "Calcul de dimensionnement d'un système solaire autonome." },
+  { id: "v3", title: "Automates Programmables (PLC)", tag: "GE", thumb: "https://img.youtube.com/vi/X_z2L1h-S6Y/maxresdefault.jpg", url: "https://www.youtube.com/embed/X_z2L1h-S6Y", desc: "Introduction au langage Ladder et programmation de base." },
+  { id: "v4", title: "Pompe à Chaleur & Froid", tag: "GEn", thumb: "https://img.youtube.com/vi/7j_Y8_X8X8X/maxresdefault.jpg", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", desc: "Cycle thermodynamique et composants principaux." }
+];
+
+const exerciseData = [
+  { id: "e1", title: "Loi d'Ohm & Puissance", q: "Un radiateur de $R=50\\Omega$ est branché sur $230V$. Calculez $I$ et $P$.", ans: 4.6, unit: "A", hint: "Utilisez $I = U/R$ et $P = U \\times I$" },
+  { id: "e2", title: "Moteur Asynchrone", q: "Un moteur a une vitesse de synchronisme $n_s = 1500$ tr/min et tourne à $n = 1440$ tr/min. Calculez le glissement $g$ en %.", ans: 4, unit: "%", hint: "$g = (n_s - n) / n_s$" },
+  { id: "e3", title: "Transformateur", q: "Un transformateur $220V/24V$ alimente une charge de $100W$. Calculez le courant secondaire $I_2$.", ans: 4.17, unit: "A", hint: "$I_2 = P / U_2$" }
+];
+
 // ═══════════════════════════════════════════════════════════
-// LANGUAGE MANAGEMENT
+// CORE FUNCTIONS
 // ═══════════════════════════════════════════════════════════
 
-function switchLanguage(lang) {
-  currentLanguage = lang;
+function setLang(lang) {
+  currentLang = lang;
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
   
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  event.target.classList.add('active');
+  // Update buttons
+  document.getElementById('btn-lang-fr').classList.toggle('active', lang === 'fr');
+  document.getElementById('btn-lang-ar').classList.toggle('active', lang === 'ar');
   
-  updateUIText();
-  showToast(`Langue: ${lang === 'fr' ? 'Français' : 'العربية'}`);
+  // Update texts
+  const t = translations[lang];
+  document.getElementById('txt-app-title').textContent = t.appTitle;
+  document.getElementById('txt-app-sub').textContent = t.appSub;
+  document.getElementById('txt-tab-chat').textContent = t.tabChat;
+  document.getElementById('txt-tab-sim').textContent = t.tabSim;
+  document.getElementById('txt-tab-videos').textContent = t.tabVideos;
+  document.getElementById('txt-tab-ex').textContent = t.tabEx;
+  document.getElementById('txt-tab-ocr').textContent = t.tabOcr;
+  document.getElementById('txt-welcome-title').textContent = t.welcomeTitle;
+  document.getElementById('txt-welcome-desc').textContent = t.welcomeDesc;
+  document.getElementById('txt-sim-params').textContent = t.simParams;
+  document.getElementById('txt-sim-u').textContent = t.simU;
+  document.getElementById('txt-sim-r').textContent = t.simR;
+  document.getElementById('txt-sim-i').textContent = t.simI;
+  document.getElementById('txt-sim-p').textContent = t.simP;
+  document.getElementById('txt-sim-live').textContent = t.simLive;
+  document.getElementById('txt-ocr-title').textContent = t.ocrTitle;
+  document.getElementById('txt-ocr-desc').textContent = t.ocrDesc;
+  
+  renderExercises();
+  showToast(lang === 'fr' ? "Langue changée" : "تم تغيير اللغة");
 }
 
-function updateUIText() {
-  const t = translations[currentLanguage];
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tabs-bar .tab-btn').forEach(b => b.classList.remove('active'));
   
-  document.getElementById('header-title').textContent = 'مساعد OFPPT';
-  document.getElementById('sidebar-title-subjects').textContent = t.subjects;
-  document.getElementById('sidebar-title-tools').textContent = t.tools;
-  document.getElementById('sidebar-title-gamification').textContent = t.gamification;
+  document.getElementById('panel-' + tabId).classList.add('active');
+  btn.classList.add('active');
   
-  document.getElementById('subject-general-name').textContent = t.general;
-  document.getElementById('subject-general-desc').textContent = t.general_desc;
-  document.getElementById('subject-ge-name').textContent = t.ge;
-  document.getElementById('subject-ge-desc').textContent = t.ge_desc;
-  document.getElementById('subject-gen-name').textContent = t.gen;
-  document.getElementById('subject-gen-desc').textContent = t.gen_desc;
-  document.getElementById('subject-automation-name').textContent = t.automation;
-  document.getElementById('subject-automation-desc').textContent = t.automation_desc;
-  
-  document.getElementById('tool-simulator').textContent = t.simulator;
-  document.getElementById('tool-simulator-desc').textContent = t.simulator_desc;
-  document.getElementById('tool-exercises').textContent = t.exercises;
-  document.getElementById('tool-exercises-desc').textContent = t.exercises_desc;
-  document.getElementById('tool-focus').textContent = t.focus;
-  document.getElementById('tool-focus-desc').textContent = t.focus_desc;
-  
-  document.getElementById('welcome-title').textContent = t.welcome;
-  document.getElementById('welcome-desc').textContent = t.welcome_desc;
-  
-  document.getElementById('quick1').textContent = 'Circuits RC';
-  document.getElementById('quick2').textContent = 'Moteur asynchrone';
-  document.getElementById('quick3').textContent = 'Transformateurs';
-  document.getElementById('quick4').textContent = t.challenge;
-  
-  document.getElementById('btn-voice').textContent = t.voice;
-  document.getElementById('btn-scanner').textContent = t.scanner;
-  document.getElementById('btn-export').textContent = t.export;
-  document.getElementById('btn-challenge').textContent = t.challenge;
-  
-  document.getElementById('scanner-title').textContent = t.scanner_title;
-  document.getElementById('scanner-desc').textContent = t.scanner_desc;
-  document.getElementById('scanner-camera-label').textContent = t.scanner_camera;
-  document.getElementById('btn-solve').textContent = t.solve;
-  document.getElementById('btn-schema').textContent = t.schema;
-  document.getElementById('btn-chart').textContent = t.chart;
-  document.getElementById('btn-summarize').textContent = t.summarize;
-  document.getElementById('btn-reset').textContent = t.reset;
-  
-  document.getElementById('simulator-title').textContent = t.simulator_title;
-  document.getElementById('voltage-label').textContent = t.voltage;
-  document.getElementById('resistance-label').textContent = t.resistance;
-  document.getElementById('current-label').textContent = t.current;
-  document.getElementById('power-label').textContent = t.power;
-  document.getElementById('resistance-result-label').textContent = t.resistance_result;
-  
-  document.getElementById('exercises-title').textContent = t.exercises_title;
-  document.getElementById('ex1-title').textContent = t.ex1_title;
-  document.getElementById('ex1-desc').textContent = t.ex1_desc;
-  document.getElementById('ex1-btn').textContent = t.verify;
-  document.getElementById('ex2-title').textContent = t.ex2_title;
-  document.getElementById('ex2-desc').textContent = t.ex2_desc;
-  document.getElementById('ex2-btn').textContent = t.verify;
-  document.getElementById('ex3-title').textContent = t.ex3_title;
-  document.getElementById('ex3-desc').textContent = t.ex3_desc;
-  document.getElementById('ex3-btn').textContent = t.verify;
-  
-  document.getElementById('challenge-title').textContent = t.challenge_title;
-  document.getElementById('score-label').textContent = t.points;
-  
-  updateLevelDisplay();
-}
-
-function t(key) {
-  return translations[currentLanguage][key] || key;
+  if (tabId === 'simulator') setTimeout(initSim, 100);
 }
 
 // ═══════════════════════════════════════════════════════════
-// GAMIFICATION SYSTEM
+// CHAT SYSTEM
 // ═══════════════════════════════════════════════════════════
 
-function calculateLevel(score) {
-  if (score < 100) return 'debutant';
-  if (score < 300) return 'technicien';
-  if (score < 600) return 'specialiste';
-  return 'expert';
-}
-
-function addScore(points) {
-  userScore += points;
-  localStorage.setItem(STORAGE_SCORES, userScore);
-  userLevel = calculateLevel(userScore);
-  updateLevelDisplay();
-}
-
-function updateLevelDisplay() {
-  const levelKey = userLevel;
-  const levelName = t(levelKey);
-  document.getElementById('level-display').innerHTML = `<div class="level-badge">${levelName}</div>`;
-  document.getElementById('score-value').textContent = userScore;
-}
-
-// ═══════════════════════════════════════════════════════════
-// MESSAGING & CHAT
-// ═══════════════════════════════════════════════════════════
-
-function sendMessage() {
-  const input = document.getElementById('message-input');
+function handleSend() {
+  const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
   
-  addUserMessage(text);
+  appendMessage('user', text);
   input.value = '';
   input.style.height = 'auto';
   
+  // Simulated AI Logic
   setTimeout(() => {
-    const response = generateResponse(text);
-    addBotMessage(response);
-  }, 800);
-}
-
-function sendQuickMessage(text) {
-  document.getElementById('message-input').value = text;
-  sendMessage();
-}
-
-function addUserMessage(text) {
-  const msg = document.createElement('div');
-  msg.className = 'msg user';
-  msg.innerHTML = `
-    <div class="msg-bubble">${escapeHtml(text)}</div>
-    <div class="avatar">👤</div>
-  `;
-  document.getElementById('messages').appendChild(msg);
-  document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
-}
-
-function addBotMessage(html) {
-  const msg = document.createElement('div');
-  msg.className = 'msg bot';
-  msg.innerHTML = `
-    <div class="avatar">⚡</div>
-    <div class="msg-bubble">${html}</div>
-  `;
-  document.getElementById('messages').appendChild(msg);
-  document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
-}
-
-function escapeHtml(text) {
-  const map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'};
-  return text.replace(/[&<>"']/g, m => map[m]);
-}
-
-function generateResponse(query) {
-  const q = query.toLowerCase();
-  
-  if (q.includes('circuit') || q.includes('rc')) {
-    return `<strong>Circuits RC</strong><br>Un circuit RC est composé d'une résistance et d'un condensateur. La constante de temps τ = RC détermine la vitesse de charge/décharge.<br><br><div class="math-block">V(t) = V₀(1 - e^(-t/RC))</div><div class="section-title">⚡ Caractéristiques:</div><div class="step"><div class="step-num">1</div><div>Charge: Le condensateur se charge à travers la résistance</div></div><div class="step"><div class="step-num">2</div><div>Décharge: Le condensateur se décharge quand la source est coupée</div></div>`;
-  }
-  if (q.includes('moteur') || q.includes('asynchrone')) {
-    return `<strong>Moteur Asynchrone</strong><br>Le moteur asynchrone est le plus utilisé en industrie. Il fonctionne grâce au champ magnétique tournant créé par les bobinages statoriques.<br><br><div class="section-title">🔌 Caractéristiques:</div><div class="step"><div class="step-num">1</div><div>Robuste et fiable</div></div><div class="step"><div class="step-num">2</div><div>Économique et peu d'entretien</div></div><div class="step"><div class="step-num">3</div><div>Glissement: n = ns(1-g) où g est le glissement</div></div>`;
-  }
-  if (q.includes('transformateur')) {
-    return `<strong>Transformateur</strong><br>Le transformateur modifie la tension alternative. Le rapport de transformation est:<br><br><div class="math-block">n₁/n₂ = V₁/V₂ = I₂/I₁</div><div class="section-title">⚡ Puissance:</div><div class="info-box"><div class="box-title">Puissance conservée (cas idéal):</div>P = V × I (constante)</div>`;
-  }
-  if (q.includes('défi')) {
-    return `Démarrage du défi rapide... Répondez à 5 questions en 60 secondes! Bonne chance! 🚀`;
-  }
-  
-  return `Je suis l'Assistant OFPPT. Je peux vous aider avec:<br><div class="section-title">📚 Domaines:</div><div class="step"><div class="step-num">1</div><div>Circuits électriques et électroniques</div></div><div class="step"><div class="step-num">2</div><div>Moteurs et transformateurs</div></div><div class="step"><div class="step-num">3</div><div>Calculs de puissance et d'énergie</div></div><div class="step"><div class="step-num">4</div><div>Automatisation et automates programmables</div></div>`;
-}
-
-// ═══════════════════════════════════════════════════════════
-// SUBJECT SELECTION
-// ═══════════════════════════════════════════════════════════
-
-function selectSubject(subject, btn) {
-  currentSubject = subject;
-  document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  showToast(`Matière: ${t(subject)}`);
-}
-
-// ═══════════════════════════════════════════════════════════
-// FOCUS MODE
-// ═══════════════════════════════════════════════════════════
-
-function toggleFocusMode() {
-  focusMode = !focusMode;
-  document.body.classList.toggle('focus-mode', focusMode);
-  showToast(focusMode ? '🎯 Mode Focus activé' : '🎯 Mode Focus désactivé');
-}
-
-// ═══════════════════════════════════════════════════════════
-// SCANNER (OCR)
-// ═══════════════════════════════════════════════════════════
-
-let scannerImg = null;
-
-function openScanner() {
-  document.getElementById('scannerModal').classList.add('open');
-}
-
-function closeScanner() {
-  document.getElementById('scannerModal').classList.remove('open');
-  resetScanner();
-}
-
-function loadScannerImage(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    scannerImg = new Image();
-    scannerImg.onload = () => {
-      const canvas = document.getElementById('scanner-canvas');
-      canvas.width = scannerImg.width;
-      canvas.height = scannerImg.height;
-      canvas.getContext('2d').drawImage(scannerImg, 0, 0);
-      document.getElementById('scanner-step1').style.display = 'none';
-      document.getElementById('scanner-step2').style.display = 'block';
-    };
-    scannerImg.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function resetScanner() {
-  scannerImg = null;
-  document.getElementById('scanner-step1').style.display = 'block';
-  document.getElementById('scanner-step2').style.display = 'none';
-  document.getElementById('scanner-file-input').value = '';
-  document.getElementById('scanner-camera-input').value = '';
-}
-
-function analyzeScanner(type) {
-  if (!scannerImg) return;
-  
-  const icons = {
-    solve: '⚡',
-    schema: '📐',
-    chart: '📊',
-    summarize: '📝',
-    explain: '💡'
-  };
-  
-  addBotMessage(`${icons[type]} Analyse OCR en cours...<br><br>Note: En mode hors ligne, l'OCR utilise Tesseract.js pour extraire le texte localement.`);
-  addScore(10);
-  closeScanner();
-}
-
-// ═══════════════════════════════════════════════════════════
-// CIRCUIT SIMULATOR
-// ═══════════════════════════════════════════════════════════
-
-function openSimulator() {
-  document.getElementById('simulatorModal').classList.add('open');
-  setTimeout(() => drawCircuit(), 100);
-}
-
-function closeSimulator() {
-  document.getElementById('simulatorModal').classList.remove('open');
-}
-
-function drawCircuit() {
-  const canvas = document.getElementById('circuit-canvas');
-  const ctx = canvas.getContext('2d');
-  
-  canvas.width = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
-  
-  ctx.fillStyle = 'var(--surface)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
-  ctx.strokeStyle = 'var(--accent)';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(50, 50, 200, 150);
-  
-  ctx.fillStyle = 'var(--text)';
-  ctx.font = '14px Arial';
-  ctx.fillText('V', 70, 100);
-  ctx.fillText('R', 150, 100);
-  ctx.fillText('I', 200, 150);
-}
-
-function updateCircuit() {
-  const V = parseFloat(document.getElementById('voltage-slider').value);
-  const R = parseFloat(document.getElementById('resistance-slider').value);
-  const I = V / R;
-  const P = V * I;
-  
-  document.getElementById('voltage-display').textContent = V + ' V';
-  document.getElementById('resistance-display').textContent = R + ' Ω';
-  document.getElementById('current-display').textContent = I.toFixed(3);
-  document.getElementById('power-display').textContent = P.toFixed(2);
-  document.getElementById('resistance-result').textContent = R;
-  
-  drawCircuit();
-}
-
-// ═══════════════════════════════════════════════════════════
-// EXERCISES & VALIDATION
-// ═══════════════════════════════════════════════════════════
-
-function openExercises() {
-  document.getElementById('exercisesModal').classList.add('open');
-}
-
-function closeExercises() {
-  document.getElementById('exercisesModal').classList.remove('open');
-}
-
-function validateExercise(exNum, correctAnswer) {
-  const input = document.getElementById(`ex${exNum}-input`);
-  const resultDiv = document.getElementById(`ex${exNum}-result`);
-  const userAnswer = parseFloat(input.value);
-  
-  if (isNaN(userAnswer)) {
-    resultDiv.innerHTML = '<div class="validation-result incorrect">Veuillez entrer un nombre</div>';
-    return;
-  }
-  
-  const tolerance = correctAnswer * 0.05;
-  const isCorrect = Math.abs(userAnswer - correctAnswer) <= tolerance;
-  
-  if (isCorrect) {
-    resultDiv.innerHTML = `<div class="validation-result correct">${t('correct')} (${correctAnswer})</div>`;
-    addScore(50);
-  } else {
-    resultDiv.innerHTML = `<div class="validation-result incorrect">${t('incorrect')} (Réponse: ${correctAnswer})</div>`;
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-// CHALLENGE (60 SECONDS)
-// ═══════════════════════════════════════════════════════════
-
-let challengeTimer = null;
-let challengeSeconds = 60;
-let challengeScore = 0;
-let challengeQuestions = [
-  { q: 'Formule de la puissance?', a: 'P = V × I' },
-  { q: 'Unité du courant?', a: 'Ampère (A)' },
-  { q: 'Loi d\'Ohm?', a: 'V = R × I' },
-  { q: 'Constante de temps RC?', a: 'τ = R × C' },
-  { q: 'Fréquence réseau?', a: '50 Hz' }
-];
-let currentQuestion = 0;
-
-function startChallenge() {
-  document.getElementById('challengeModal').classList.add('open');
-  challengeSeconds = 60;
-  challengeScore = 0;
-  currentQuestion = 0;
-  showChallengeQuestion();
-  
-  challengeTimer = setInterval(() => {
-    challengeSeconds--;
-    document.getElementById('challenge-timer').textContent = challengeSeconds;
-    if (challengeSeconds <= 10) {
-      document.getElementById('challenge-timer').style.color = 'var(--danger)';
+    let reply = "";
+    if (text.toLowerCase().includes('ohm')) {
+      reply = `La **Loi d'Ohm** est fondamentale en électricité. Elle établit la relation entre la tension $U$, l'intensité $I$ et la résistance $R$.<br><br><div class="math-display">$$U = R \\times I$$</div><div class="section-title">⚡ Paramètres:</div><div class="step"><div class="step-num">1</div><div>$U$: Tension en Volts (V)</div></div><div class="step"><div class="step-num">2</div><div>$R$: Résistance en Ohms ($\\Omega$)</div></div><div class="step"><div class="step-num">3</div><div>$I$: Intensité en Ampères (A)</div></div>`;
+    } else if (text.toLowerCase().includes('moteur')) {
+      reply = `Le **Moteur Asynchrone** transforme l'énergie électrique en énergie mécanique.<br><br><div class="section-title">⚙️ Formules Clés:</div><div class="step"><div class="step-num">1</div><div>Vitesse de synchronisme: $n_s = f/p$</div></div><div class="step"><div class="step-num">2</div><div>Glissement: $g = (n_s - n)/n_s$</div></div><div class="step"><div class="step-num">3</div><div>Puissance absorbée: $P_a = U \\cdot I \\cdot \\sqrt{3} \\cdot \\cos\\phi$</div></div>`;
+    } else {
+      reply = "Je suis votre assistant spécialisé OFPPT. Je peux vous aider sur les circuits électriques, les moteurs, le solaire ou l'automatisation. Posez-moi une question technique !";
     }
-    if (challengeSeconds <= 0) {
-      endChallenge();
-    }
+    appendMessage('bot', reply);
   }, 1000);
 }
 
-function showChallengeQuestion() {
-  if (currentQuestion >= challengeQuestions.length) {
-    endChallenge();
-    return;
-  }
-  
-  const q = challengeQuestions[currentQuestion];
-  document.getElementById('challenge-content').innerHTML = `
-    <div style="font-size:18px;margin:20px 0;font-weight:600;">${escapeHtml(q.q)}</div>
-    <input type="text" id="challenge-answer" placeholder="Réponse..." style="padding:10px;border:1px solid var(--border);border-radius:6px;width:100%;margin:10px 0;background:var(--surface2);color:var(--text);">
-    <button onclick="checkChallengeAnswer()" style="padding:8px 16px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:6px;color:#000;font-weight:600;cursor:pointer;width:100%;">Vérifier</button>
+function sendQuick(text) {
+  document.getElementById('chat-input').value = text;
+  handleSend();
+}
+
+function appendMessage(role, content) {
+  const container = document.getElementById('chat-messages');
+  const msg = document.createElement('div');
+  msg.className = `msg ${role}`;
+  msg.innerHTML = `
+    <div class="avatar">${role === 'user' ? '👤' : '⚡'}</div>
+    <div class="msg-bubble">${content}</div>
   `;
-  document.getElementById('challenge-answer').focus();
-}
-
-function checkChallengeAnswer() {
-  const input = document.getElementById('challenge-answer');
-  const answer = input.value.toLowerCase().trim();
-  const correct = challengeQuestions[currentQuestion].a.toLowerCase();
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
   
-  if (answer.includes(correct.split(' ')[0])) {
-    challengeScore++;
-    addScore(20);
-  }
-  
-  currentQuestion++;
-  showChallengeQuestion();
-}
-
-function endChallenge() {
-  clearInterval(challengeTimer);
-  const pct = Math.round(challengeScore / challengeQuestions.length * 100);
-  
-  document.getElementById('challenge-content').innerHTML = `
-    <div style="font-size:48px;margin:20px 0;">${pct >= 80 ? '🏆' : pct >= 50 ? '⭐' : '💪'}</div>
-    <div style="font-size:28px;font-weight:900;color:var(--accent);">${challengeScore}/${challengeQuestions.length}</div>
-    <div style="font-size:14px;color:var(--muted);margin:10px 0;">${pct}% de réussite</div>
-    <button onclick="closeChallenge()" style="padding:8px 16px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:6px;color:#000;font-weight:600;cursor:pointer;margin-top:10px;">Fermer</button>
-  `;
-}
-
-function closeChallenge() {
-  document.getElementById('challengeModal').classList.remove('open');
-  clearInterval(challengeTimer);
-}
-
-// ═══════════════════════════════════════════════════════════
-// VOICE SEARCH
-// ═══════════════════════════════════════════════════════════
-
-function startVoiceSearch() {
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    showToast('⚠️ Reconnaissance vocale non supportée');
-    return;
-  }
-  
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-  recognition.lang = currentLanguage === 'ar' ? 'ar-SA' : 'fr-FR';
-  
-  showToast('🎤 Écoute en cours...');
-  
-  recognition.onresult = (event) => {
-    let transcript = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      transcript += event.results[i][0].transcript;
-    }
-    if (transcript) {
-      document.getElementById('message-input').value = transcript;
-      sendMessage();
-    }
-  };
-  
-  recognition.onerror = () => {
-    showToast('⚠️ Erreur de reconnaissance vocale');
-  };
-  
-  recognition.start();
-}
-
-// ═══════════════════════════════════════════════════════════
-// PDF EXPORT
-// ═══════════════════════════════════════════════════════════
-
-async function exportPDF() {
-  const messages = document.getElementById('messages').innerText;
-  
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  
-  canvas.width = 800;
-  canvas.height = 1000;
-  
-  ctx.fillStyle = '#0b0f1a';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
-  ctx.fillStyle = '#00d084';
-  ctx.font = 'bold 24px Arial';
-  ctx.fillText('Assistant OFPPT - Export', 50, 50);
-  
-  ctx.fillStyle = '#e6edf3';
-  ctx.font = '14px Arial';
-  ctx.fillText('Contenu de la session:', 50, 100);
-  
-  const lines = messages.split('\n').slice(0, 30);
-  let y = 130;
-  lines.forEach(line => {
-    ctx.fillText(line.substring(0, 80), 50, y);
-    y += 20;
-  });
-  
-  canvas.toBlob(blob => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'assistant-ofppt-export.png';
-    a.click();
-    showToast('📥 Export créé!');
-  });
-}
-
-// ═══════════════════════════════════════════════════════════
-// UTILITIES
-// ═══════════════════════════════════════════════════════════
-
-function showToast(message) {
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
-}
-
-// ═══════════════════════════════════════════════════════════
-// OFFLINE SUPPORT & PWA
-// ═══════════════════════════════════════════════════════════
-
-window.addEventListener('online', () => {
-  isOnline = true;
-  document.getElementById('offline-banner').classList.remove('show');
-  showToast('🟢 Vous êtes en ligne');
-});
-
-window.addEventListener('offline', () => {
-  isOnline = false;
-  document.getElementById('offline-banner').classList.add('show');
-  showToast('🔴 Mode hors ligne');
-});
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('data:application/javascript,' + encodeURIComponent(`
-    self.addEventListener('install', event => {
-      event.waitUntil(
-        caches.open('ofppt-v1').then(cache => {
-          return cache.addAll(['/']);
-        })
-      );
+  if (role === 'bot') {
+    renderMathInElement(msg, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ]
     });
-    
-    self.addEventListener('fetch', event => {
-      event.respondWith(
-        caches.match(event.request).then(response => {
-          return response || fetch(event.request);
-        })
-      );
-    });
-  `)).catch(() => {});
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// SIMULATOR LOGIC (PHYSICS ENGINE)
+// ═══════════════════════════════════════════════════════════
+
+let simCtx, simCanvas;
+let electronPos = 0;
+
+function initSim() {
+  simCanvas = document.getElementById('sim-canvas');
+  simCtx = simCanvas.getContext('2d');
+  simCanvas.width = simCanvas.offsetWidth;
+  simCanvas.height = simCanvas.offsetHeight;
+  requestAnimationFrame(drawLoop);
+}
+
+function updateSim() {
+  const u = document.getElementById('slider-u').value;
+  const r = document.getElementById('slider-r').value;
+  const i = u / r;
+  const p = u * i;
+  
+  document.getElementById('val-u').textContent = u + " V";
+  document.getElementById('val-r').textContent = r + " Ω";
+  document.getElementById('val-i').textContent = i.toFixed(3) + " A";
+  document.getElementById('val-p').textContent = p.toFixed(2) + " W";
+}
+
+function drawLoop() {
+  if (!simCtx) return;
+  const u = document.getElementById('slider-u').value;
+  const r = document.getElementById('slider-r').value;
+  const i = u / r;
+  
+  simCtx.clearRect(0, 0, simCanvas.width, simCanvas.height);
+  
+  const centerX = simCanvas.width / 2;
+  const centerY = simCanvas.height / 2;
+  const w = 300;
+  const h = 200;
+  
+  // Circuit Wire
+  simCtx.strokeStyle = '#2d3a52';
+  simCtx.lineWidth = 4;
+  simCtx.strokeRect(centerX - w/2, centerY - h/2, w, h);
+  
+  // Components
+  simCtx.fillStyle = '#0b0f1a';
+  // Generator
+  simCtx.fillRect(centerX - w/2 - 10, centerY - 30, 20, 60);
+  simCtx.strokeStyle = varColor('--accent');
+  simCtx.strokeRect(centerX - w/2 - 10, centerY - 30, 20, 60);
+  
+  // Resistor
+  simCtx.fillRect(centerX + w/2 - 10, centerY - 40, 20, 80);
+  simCtx.strokeStyle = varColor('--accent2');
+  simCtx.strokeRect(centerX + w/2 - 10, centerY - 40, 20, 80);
+  
+  // Electrons (Animation)
+  const speed = i * 5;
+  electronPos += speed;
+  if (electronPos > (w + h) * 2) electronPos = 0;
+  
+  drawElectron(centerX, centerY, w, h, electronPos);
+  drawElectron(centerX, centerY, w, h, (electronPos + 100) % ((w + h) * 2));
+  drawElectron(centerX, centerY, w, h, (electronPos + 200) % ((w + h) * 2));
+  
+  requestAnimationFrame(drawLoop);
+}
+
+function drawElectron(cx, cy, w, h, pos) {
+  let x, y;
+  const perimeter = (w + h) * 2;
+  if (pos < w) { x = cx - w/2 + pos; y = cy - h/2; }
+  else if (pos < w + h) { x = cx + w/2; y = cy - h/2 + (pos - w); }
+  else if (pos < 2*w + h) { x = cx + w/2 - (pos - (w + h)); y = cy + h/2; }
+  else { x = cx - w/2; y = cy + h/2 - (pos - (2*w + h)); }
+  
+  simCtx.fillStyle = varColor('--accent3');
+  simCtx.beginPath();
+  simCtx.arc(x, y, 4, 0, Math.PI * 2);
+  simCtx.fill();
+}
+
+function varColor(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+// ═══════════════════════════════════════════════════════════
+// EXERCISES & CONTENT
+// ═══════════════════════════════════════════════════════════
+
+function renderExercises() {
+  const container = document.getElementById('exercise-list');
+  container.innerHTML = '';
+  exerciseData.forEach(ex => {
+    const card = document.createElement('div');
+    card.className = 'sim-stats';
+    card.style.background = 'var(--surface)';
+    card.style.border = '1px solid var(--border)';
+    card.innerHTML = `
+      <h4 style="color:var(--accent); margin-bottom:10px;">${ex.title}</h4>
+      <p style="margin-bottom:15px; font-size:14px;">${ex.q}</p>
+      <div style="display:flex; gap:10px;">
+        <input type="number" id="ans-${ex.id}" placeholder="Réponse" style="flex:1; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text);">
+        <button class="tab-btn active" onclick="checkAnswer('${ex.id}', ${ex.ans})">${currentLang === 'fr' ? 'Vérifier' : 'تحقق'}</button>
+      </div>
+      <div id="res-${ex.id}" style="margin-top:10px; font-size:12px;"></div>
+    `;
+    container.appendChild(card);
+    renderMathInElement(card, { delimiters: [{left: '$', right: '$', display: false}] });
+  });
+}
+
+function checkAnswer(id, correct) {
+  const val = parseFloat(document.getElementById('ans-' + id).value);
+  const res = document.getElementById('res-' + id);
+  if (Math.abs(val - correct) < 0.1) {
+    res.innerHTML = `<span style="color:var(--success);">${translations[currentLang].correct}</span>`;
+    addScore(50);
+  } else {
+    res.innerHTML = `<span style="color:var(--danger);">${translations[currentLang].incorrect}</span>`;
+  }
+}
+
+function renderVideos() {
+  const grid = document.getElementById('video-grid');
+  videoData.forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'vcard';
+    card.onclick = () => openVideo(v);
+    card.innerHTML = `
+      <div class="vcard-thumb">
+        <img src="${v.thumb}">
+        <div class="vcard-play"><div class="vcard-play-btn">▶</div></div>
+      </div>
+      <div class="vcard-info">
+        <span class="vcard-tag">${v.tag}</span>
+        <h4 class="vcard-title">${v.title}</h4>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function openVideo(v) {
+  document.getElementById('modal-video-title').textContent = v.title;
+  document.getElementById('modal-video-desc').textContent = v.desc;
+  document.getElementById('video-iframe').src = v.url;
+  document.getElementById('video-modal').classList.add('open');
+}
+
+function closeVideo() {
+  document.getElementById('video-modal').classList.remove('open');
+  document.getElementById('video-iframe').src = '';
+}
+
+function addScore(pts) {
+  userScore += pts;
+  localStorage.setItem('ofppt_score', userScore);
+  showToast(translations[currentLang].scoreAdded + userScore);
+}
+
+function addSimScore() {
+  addScore(20);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1072,25 +605,21 @@ if ('serviceWorker' in navigator) {
 // ═══════════════════════════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
-  updateLevelDisplay();
-  updateUIText();
+  renderVideos();
+  renderExercises();
+  updateSim();
   
-  const textarea = document.getElementById('message-input');
-  textarea.addEventListener('input', () => {
-    textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 90) + 'px';
-  });
-  
-  textarea.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
+  // OCR Placeholder
+  window.handleOCR = function(input) {
+    if (input.files && input.files[0]) {
+      showToast(currentLang === 'fr' ? "Analyse OCR en cours..." : "جاري تحليل الصورة...");
+      setTimeout(() => {
+        switchTab('chat', document.querySelectorAll('.tab-btn')[0]);
+        appendMessage('bot', "Analyse terminée. L'exercice concerne un **Moteur à courant continu**. Voici la solution...");
+      }, 2000);
     }
-  });
-  
-  showToast('⚡ Assistant OFPPT chargé');
+  };
 });
 </script>
 </body>
 </html>
-
